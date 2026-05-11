@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FutsalLoad — Control de Carga</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Unbounded:wght@400;600;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --rojo:#E8342A;--rojo-bg:#FEF0EF;--rojo-border:#F5A8A4;
+  --naranja:#E8780A;--naranja-bg:#FEF5E7;--naranja-border:#F5C97A;
+  --amarillo:#C9A800;--amarillo-bg:#FEFCE8;--amarillo-border:#F0DE6A;
+  --verde:#1A8A4A;--verde-bg:#EDFAF2;--verde-border:#82D4A8;
+  --dark:#0F0F0F;--surface:#F5F4F0;--card:#FFFFFF;
+  --text:#1A1A1A;--muted:#6B6B6B;--border:#E0DED8;
+  --font-display:'Unbounded',sans-serif;
+  --font-body:'DM Sans',sans-serif;
+  --font-mono:'DM Mono',monospace;
+}
+body{font-family:var(--font-body);background:var(--surface);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6}
+
+/* NAV */
+nav{background:var(--dark);padding:0 2rem;display:flex;align-items:center;gap:0;border-bottom:1px solid #222;position:sticky;top:0;z-index:100}
+.nav-brand{font-family:var(--font-display);font-size:13px;font-weight:800;color:#fff;letter-spacing:-0.02em;padding:1rem 1.5rem 1rem 0;border-right:1px solid #333;margin-right:1rem;white-space:nowrap}
+.nav-brand span{color:var(--naranja)}
+.nav-tabs{display:flex;gap:0}
+.nav-tab{font-family:var(--font-body);font-size:13px;font-weight:500;color:#888;padding:1.1rem 1.2rem;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
+.nav-tab:hover{color:#ddd}
+.nav-tab.active{color:#fff;border-bottom-color:var(--naranja)}
+
+/* LAYOUT */
+.page{display:none;padding:2rem;max-width:1400px;margin:0 auto}
+.page.active{display:block}
+
+/* SEMANA TIPO */
+.week-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap}
+.week-header h1{font-family:var(--font-display);font-size:18px;font-weight:600;letter-spacing:-0.03em}
+.match-day-selector{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 12px}
+.match-day-selector label{font-size:12px;color:var(--muted);font-weight:500}
+.match-day-selector select{border:none;background:transparent;font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--text);cursor:pointer;outline:none}
+
+/* DAYS GRID */
+.days-grid{display:grid;gap:12px}
+.day-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.day-header{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.day-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.day-name{font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase}
+.day-label{font-size:12px;color:var(--muted);margin-left:auto}
+.day-md-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;font-family:var(--font-mono)}
+.day-body{padding:14px 16px}
+.day-meta{display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap}
+.meta-item{display:flex;flex-direction:column;gap:2px}
+.meta-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;font-weight:500}
+.meta-value{font-size:15px;font-weight:600;font-family:var(--font-mono)}
+.tasks-list{display:flex;flex-direction:column;gap:6px}
+.task-chip{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;font-size:12px;border:1px solid}
+.task-chip-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.task-chip-name{flex:1;font-weight:500}
+.task-chip-time{font-family:var(--font-mono);font-size:11px;color:var(--muted)}
+.task-chip-rpe{font-family:var(--font-mono);font-size:10px;padding:1px 5px;border-radius:3px;font-weight:600}
+.add-task-btn{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:6px;font-size:12px;color:var(--muted);cursor:pointer;border:1px dashed var(--border);background:transparent;width:100%;text-align:left;margin-top:4px;font-family:var(--font-body)}
+.add-task-btn:hover{background:var(--surface);color:var(--text)}
+
+/* COLORS */
+.color-rojo{background:var(--rojo-bg);border-color:var(--rojo-border);color:var(--rojo)}
+.color-naranja{background:var(--naranja-bg);border-color:var(--naranja-border);color:var(--naranja)}
+.color-amarillo{background:var(--amarillo-bg);border-color:var(--amarillo-border);color:var(--amarillo)}
+.color-verde{background:var(--verde-bg);border-color:var(--verde-border);color:var(--verde)}
+.dot-rojo{background:var(--rojo)}
+.dot-naranja{background:var(--naranja)}
+.dot-amarillo{background:var(--amarillo)}
+.dot-verde{background:var(--verde)}
+.rpe-rojo{background:var(--rojo-bg);color:var(--rojo)}
+.rpe-naranja{background:var(--naranja-bg);color:var(--naranja)}
+.rpe-amarillo{background:var(--amarillo-bg);color:var(--amarillo)}
+.rpe-verde{background:var(--verde-bg);color:var(--verde)}
+
+/* TOTALS STRIP */
+.week-totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.5rem}
+.total-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.total-label{font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);font-weight:500;margin-bottom:4px}
+.total-value{font-size:22px;font-weight:600;font-family:var(--font-mono);letter-spacing:-0.03em}
+.total-sub{font-size:11px;color:var(--muted)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border-radius:16px;padding:2rem;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;position:relative}
+.modal h2{font-family:var(--font-display);font-size:15px;font-weight:600;margin-bottom:1.5rem;letter-spacing:-0.02em}
+.form-row{margin-bottom:1rem}
+.form-row label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:6px}
+.form-row input,.form-row select,.form-row textarea{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-family:var(--font-body);font-size:13px;background:var(--surface);color:var(--text);outline:none;transition:border-color .2s}
+.form-row input:focus,.form-row select:focus,.form-row textarea:focus{border-color:var(--naranja)}
+.form-row textarea{resize:vertical;min-height:60px}
+.color-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.color-opt{padding:8px;border-radius:8px;cursor:pointer;text-align:center;font-size:11px;font-weight:600;border:2px solid transparent;transition:all .2s}
+.color-opt.selected{border-color:var(--dark)}
+.color-opt.rojo{background:var(--rojo-bg);color:var(--rojo)}
+.color-opt.naranja{background:var(--naranja-bg);color:var(--naranja)}
+.color-opt.amarillo{background:var(--amarillo-bg);color:var(--amarillo)}
+.color-opt.verde{background:var(--verde-bg);color:var(--verde)}
+.modal-actions{display:flex;gap:8px;margin-top:1.5rem}
+.btn{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--font-body);transition:all .2s}
+.btn-primary{background:var(--dark);color:#fff}
+.btn-primary:hover{background:#333}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--border)}
+.btn-danger{background:var(--rojo-bg);color:var(--rojo);border:1px solid var(--rojo-border)}
+
+/* MENSUAL */
+.monthly-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:2rem}
+.month-cell{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .2s;font-family:var(--font-mono);position:relative}
+.month-cell:hover{transform:scale(1.05)}
+.month-cell.empty{background:transparent;border:none;cursor:default}
+.month-cell.empty:hover{transform:none}
+.month-cell-day{font-size:10px;font-weight:400;opacity:.7;margin-bottom:2px}
+.month-cell-rpe{font-size:13px;font-weight:700}
+.month-cell-dots{display:flex;gap:2px;margin-top:2px}
+.month-cell-dot{width:4px;height:4px;border-radius:50%}
+.month-nav{display:flex;align-items:center;gap:12px;margin-bottom:1rem}
+.month-nav h2{font-family:var(--font-display);font-size:15px;font-weight:600;flex:1}
+.month-nav-btn{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:6px 10px;cursor:pointer;font-size:16px;line-height:1}
+.month-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:1.5rem}
+.weekday-labels{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px}
+.weekday-label{text-align:center;font-size:10px;color:var(--muted);font-weight:600;letter-spacing:0.05em}
+
+/* CARGA AGUDA/CRÓNICA */
+.acwr-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem}
+.acwr-title{font-family:var(--font-display);font-size:13px;font-weight:600;margin-bottom:1rem;letter-spacing:-0.02em}
+.acwr-bar{height:12px;border-radius:6px;background:var(--border);position:relative;margin:8px 0;overflow:hidden}
+.acwr-fill{height:100%;border-radius:6px;transition:width .5s ease}
+.acwr-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:2px}
+.acwr-ratio-big{font-size:36px;font-weight:700;font-family:var(--font-mono);letter-spacing:-0.04em}
+.acwr-zone{font-size:12px;font-weight:600;padding:3px 10px;border-radius:5px;display:inline-block;margin-top:4px}
+.acwr-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+
+/* TEORIA */
+.teoria-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.teoria-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.4rem;border-left:4px solid}
+.teoria-card.rojo{border-left-color:var(--rojo)}
+.teoria-card.naranja{border-left-color:var(--naranja)}
+.teoria-card.amarillo{border-left-color:var(--amarillo)}
+.teoria-card.verde{border-left-color:var(--verde)}
+.teoria-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:5px;display:inline-block;margin-bottom:10px;font-family:var(--font-mono)}
+.teoria-card h3{font-family:var(--font-display);font-size:13px;font-weight:600;margin-bottom:8px;letter-spacing:-0.02em}
+.teoria-card p{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:8px}
+.teoria-list{list-style:none;display:flex;flex-direction:column;gap:4px}
+.teoria-list li{font-size:12px;display:flex;align-items:flex-start;gap:6px;color:var(--text)}
+.teoria-list li::before{content:'→';font-size:11px;margin-top:1px;flex-shrink:0;opacity:.5}
+.md-guide{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:14px}
+.md-guide-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;cursor:pointer}
+.md-guide-header h3{font-family:var(--font-display);font-size:12px;font-weight:600;flex:1;letter-spacing:-0.01em}
+.md-guide-body{padding:16px;display:none}
+.md-guide-body.open{display:block}
+.md-guide-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px}
+.md-guide-section h4{font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);font-weight:600;margin-bottom:6px}
+
+/* HISTORICO */
+.historico-table{width:100%;border-collapse:collapse;font-size:13px}
+.historico-table th{text-align:left;padding:8px 12px;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);font-weight:600;border-bottom:1px solid var(--border)}
+.historico-table td{padding:9px 12px;border-bottom:1px solid var(--border)}
+.historico-table tr:hover td{background:var(--surface)}
+.semaforo-pill{font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;font-family:var(--font-mono);display:inline-block}
+
+/* SECTION TITLES */
+.section-title{font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:-0.02em;margin-bottom:1rem;margin-top:1.5rem}
+.section-title:first-child{margin-top:0}
+
+/* tooltip */
+.tooltip{position:absolute;background:var(--dark);color:#fff;font-size:11px;padding:4px 8px;border-radius:5px;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s;font-family:var(--font-mono)}
+.month-cell:hover .tooltip{opacity:1}
+
+/* responsive */
+@media(max-width:700px){
+  .days-grid{grid-template-columns:1fr}
+  .acwr-grid{grid-template-columns:1fr}
+  .md-guide-grid{grid-template-columns:1fr}
+  nav{flex-wrap:wrap;padding:.5rem 1rem}
+  .nav-brand{border-right:none;padding-right:0}
+  .nav-tabs{overflow-x:auto;width:100%}
+  .page{padding:1rem}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">FUTSAL<span>LOAD</span></div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showPage('semana')">Semana tipo</div>
+    <div class="nav-tab" onclick="showPage('mensual')">Mensual</div>
+    <div class="nav-tab" onclick="showPage('historico')">Histórico</div>
+    <div class="nav-tab" onclick="showPage('teoria')">Teoría</div>
+  </div>
+</nav>
+
+<!-- PAGE: SEMANA -->
+<div class="page active" id="page-semana">
+  <div class="week-header">
+    <h1>Semana tipo</h1>
+    <div class="match-day-selector">
+      <label>Match Day</label>
+      <select id="match-day-select" onchange="rebuildWeek()">
+        <option value="saturday">Sábado (MD)</option>
+        <option value="sunday">Domingo (MD)</option>
+        <option value="friday">Viernes (MD)</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="saveWeekToHistory()">
+      <i class="ti ti-device-floppy"></i> Guardar semana
+    </button>
+  </div>
+
+  <div class="week-totals" id="week-totals"></div>
+  <div class="days-grid" id="days-grid"></div>
+</div>
+
+<!-- PAGE: MENSUAL -->
+<div class="page" id="page-mensual">
+  <div class="month-nav">
+    <button class="month-nav-btn" onclick="changeMonth(-1)">‹</button>
+    <h2 id="month-title"></h2>
+    <button class="month-nav-btn" onclick="changeMonth(1)">›</button>
+  </div>
+  <div class="month-stats" id="month-stats"></div>
+  <div class="weekday-labels">
+    <div class="weekday-label">Lun</div><div class="weekday-label">Mar</div>
+    <div class="weekday-label">Mié</div><div class="weekday-label">Jue</div>
+    <div class="weekday-label">Vie</div><div class="weekday-label">Sáb</div>
+    <div class="weekday-label">Dom</div>
+  </div>
+  <div class="monthly-grid" id="monthly-grid"></div>
+
+  <div class="acwr-section">
+    <div class="acwr-title">Carga Aguda vs Crónica (ACWR)</div>
+    <div class="acwr-grid">
+      <div>
+        <div class="meta-label">Carga aguda (7 días)</div>
+        <div class="total-value" id="acute-load">—</div>
+        <div class="acwr-bar"><div class="acwr-fill" id="acute-bar" style="background:var(--naranja)"></div></div>
+        <div class="total-sub">RPE acumulado últimos 7 días</div>
+      </div>
+      <div>
+        <div class="meta-label">Carga crónica (28 días)</div>
+        <div class="total-value" id="chronic-load">—</div>
+        <div class="acwr-bar"><div class="acwr-fill" id="chronic-bar" style="background:var(--verde)"></div></div>
+        <div class="total-sub">Promedio semanal últimas 4 semanas</div>
+      </div>
+    </div>
+    <div style="margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--border)">
+      <div class="meta-label">Ratio ACWR</div>
+      <div class="acwr-ratio-big" id="acwr-ratio">—</div>
+      <div class="acwr-zone" id="acwr-zone"></div>
+      <p style="font-size:11px;color:var(--muted);margin-top:8px">Zona segura: 0.8 — 1.3 | Riesgo lesión: >1.5 | Desacondicionamiento: <0.8</p>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: HISTORICO -->
+<div class="page" id="page-historico">
+  <div class="week-header">
+    <h1>Histórico de semanas</h1>
+    <button class="btn btn-secondary" onclick="clearHistory()">
+      <i class="ti ti-trash"></i> Limpiar
+    </button>
+  </div>
+  <div id="historico-content"></div>
+</div>
+
+<!-- PAGE: TEORIA -->
+<div class="page" id="page-teoria">
+  <div class="section-title">Sistema de colores — Semáforo de carga</div>
+  <div class="teoria-grid" id="teoria-semaforo"></div>
+
+  <div class="section-title" style="margin-top:2rem">Guía por Match Day (MD)</div>
+  <div id="md-guides"></div>
+
+  <div class="section-title" style="margin-top:2rem">Tipos de tarea y carga estimada</div>
+  <div class="teoria-grid" id="teoria-tareas"></div>
+</div>
+
+<!-- MODAL TAREA -->
+<div class="modal-overlay" id="task-modal">
+  <div class="modal">
+    <h2>Nueva tarea</h2>
+    <div class="form-row">
+      <label>Nombre de la tarea</label>
+      <input type="text" id="t-name" placeholder="Ej: Rondo 4v2 presión temporal">
+    </div>
+    <div class="form-row">
+      <label>Tipo de tarea</label>
+      <select id="t-type">
+        <option value="drill">Tecnificación (Drill)</option>
+        <option value="reducido-1v1">Reducido 1v1</option>
+        <option value="reducido-2v2">Reducido 2v2</option>
+        <option value="reducido-3v3">Reducido 3v3</option>
+        <option value="reducido-4v4">Reducido 4v4</option>
+        <option value="reducido-5v5">Reducido 5v5</option>
+        <option value="transicion-corta">Transición corta</option>
+        <option value="transicion-larga">Transición larga</option>
+        <option value="juego-real">Juego real</option>
+        <option value="juego-condicionado">Juego real condicionado</option>
+        <option value="abp">ABP (balón parado)</option>
+        <option value="5v4">Situación especial 5v4 / 4v5</option>
+        <option value="4v3">Situación especial 4v3 / 3v4</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Dimensiones</label>
+      <select id="t-dim">
+        <option value="10x10">10×10</option>
+        <option value="10x20">10×20</option>
+        <option value="20x20">20×20</option>
+        <option value="28x20">28×20</option>
+        <option value="30x20">30×20</option>
+        <option value="40x20">40×20</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Color semáforo</label>
+      <div class="color-picker">
+        <div class="color-opt rojo selected" data-color="rojo" onclick="selectColor(this)">🔴 Rojo</div>
+        <div class="color-opt naranja" data-color="naranja" onclick="selectColor(this)">🟠 Naranja</div>
+        <div class="color-opt amarillo" data-color="amarillo" onclick="selectColor(this)">🟡 Amarillo</div>
+        <div class="color-opt verde" data-color="verde" onclick="selectColor(this)">🟢 Verde</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Duración (min)</label>
+      <input type="number" id="t-duration" value="10" min="1" max="60">
+    </div>
+    <div class="form-row">
+      <label>Series × Tiempo trabajo (ej: 4x3min)</label>
+      <input type="text" id="t-series" placeholder="4x3">
+    </div>
+    <div class="form-row">
+      <label>Relación trabajo/pausa</label>
+      <select id="t-ratio">
+        <option value="1:3">1:3 (🟢 Verde)</option>
+        <option value="1:2">1:2 (🟡 Amarillo)</option>
+        <option value="1:1">1:1 (🟠 Naranja)</option>
+        <option value="2:1">2:1 (🔴 Rojo)</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>RPE esperado (1-10)</label>
+      <input type="range" id="t-rpe" min="1" max="10" value="7" oninput="document.getElementById('t-rpe-val').textContent=this.value">
+      <div style="text-align:center;font-size:18px;font-weight:700;font-family:var(--font-mono);margin-top:4px" id="t-rpe-val">7</div>
+    </div>
+    <div class="form-row">
+      <label>Objetivo táctico</label>
+      <textarea id="t-objective" placeholder="Ej: Pressing en 1ª línea, recuperación rápida..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="saveTask()">Guardar</button>
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const COLORS={
+  rojo:{name:'Rojo',emoji:'🔴',rpe:'8-10',dot:'dot-rojo',chip:'color-rojo',rpe_class:'rpe-rojo'},
+  naranja:{name:'Naranja',emoji:'🟠',rpe:'6-8',dot:'dot-naranja',chip:'color-naranja',rpe_class:'rpe-naranja'},
+  amarillo:{name:'Amarillo',emoji:'🟡',rpe:'4-6',dot:'dot-amarillo',chip:'color-amarillo',rpe_class:'rpe-amarillo'},
+  verde:{name:'Verde',emoji:'🟢',rpe:'2-4',dot:'dot-verde',chip:'color-verde',rpe_class:'rpe-verde'}
+};
+
+const TASK_TYPES={
+  'drill':['analítico','tecnificación'],
+  'reducido-1v1':['reducido','alta intensidad'],
+  'reducido-2v2':['reducido','bilateral'],
+  'reducido-3v3':['reducido','juego corto'],
+  'reducido-4v4':['reducido','juego intenso'],
+  'reducido-5v5':['reducido','juego posicional'],
+  'transicion-corta':['transición','sprint corto'],
+  'transicion-larga':['transición','oleadas'],
+  'juego-real':['juego real','competitivo'],
+  'juego-condicionado':['juego condicionado','táctico'],
+  'abp':['balón parado','automatización'],
+  '5v4':['situación especial','superioridad'],
+  '4v3':['situación especial','superioridad ofensiva']
+};
+
+const MD_CONFIGS={
+  saturday:{md:6,days:['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],rest:[0,6]},
+  sunday:{md:0,days:['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],rest:[0,6]},
+  friday:{md:5,days:['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],rest:[5,6]}
+};
+
+function getMDOffset(mdVal){
+  if(mdVal==='saturday') return 5;
+  if(mdVal==='sunday') return 6;
+  if(mdVal==='friday') return 4;
+  return 5;
+}
+
+const DEFAULT_WEEK_TEMPLATES={
+  saturday:[
+    {label:'Lun',md_offset:-5,color:'verde',name:'Recuperación / Priming',volume:45,objectives:['Activación neural','Técnica fina','Priming post-partido'],defaultTasks:[
+      {name:'Técnica individual',color:'verde',duration:15,rpe:3,type:'drill',dim:'20x20',series:'',ratio:'1:3',obj:'Automatización técnica'},
+      {name:'ABP repaso',color:'verde',duration:20,rpe:3,type:'abp',dim:'28x20',series:'',ratio:'1:3',obj:'Balón parado ofensivo y defensivo'}
+    ]},
+    {label:'Mar',md_offset:-4,color:'rojo',name:'Carga máxima',volume:90,objectives:['Alta fatiga acumulada','Transiciones','Juego reducido intenso'],defaultTasks:[
+      {name:'Transiciones continuas',color:'rojo',duration:20,rpe:9,type:'transicion-larga',dim:'40x20',series:'6x3',ratio:'2:1',obj:'Velocidad de transición ataque-defensa'},
+      {name:'4v4 presión alta',color:'rojo',duration:20,rpe:9,type:'reducido-4v4',dim:'20x20',series:'4x4',ratio:'1:1',obj:'Pressing colectivo'},
+      {name:'RSA específico',color:'rojo',duration:15,rpe:9,type:'drill',dim:'40x20',series:'8x15s',ratio:'1:2',obj:'Resistencia a sprints repetidos'}
+    ]},
+    {label:'Mié',md_offset:-3,color:'naranja',name:'Alta intensidad táctica',volume:75,objectives:['Velocidad táctica','Posesión dinámica','Presión organizada'],defaultTasks:[
+      {name:'Posesión condicionada',color:'naranja',duration:20,rpe:7,type:'juego-condicionado',dim:'30x20',series:'5x4',ratio:'1:1',obj:'Posesión con presión organizada'},
+      {name:'3v3 competitivo',color:'naranja',duration:20,rpe:7,type:'reducido-3v3',dim:'20x20',series:'4x4',ratio:'1:1',obj:'Juego corto con transición'}
+    ]},
+    {label:'Jue',md_offset:-2,color:'amarillo',name:'Ajuste táctico',volume:60,objectives:['Automatizaciones','Balón parado','Velocidad sin desgaste'],defaultTasks:[
+      {name:'Automatización defensiva',color:'amarillo',duration:20,rpe:5,type:'juego-condicionado',dim:'28x20',series:'',ratio:'1:2',obj:'Sistema defensivo'},
+      {name:'ABP ofensivo',color:'amarillo',duration:15,rpe:4,type:'abp',dim:'28x20',series:'',ratio:'1:3',obj:'Jugadas a balón parado'}
+    ]},
+    {label:'Vie',md_offset:-1,color:'verde',name:'Priming neural',volume:35,objectives:['Activación explosiva','Finalización','Confianza competitiva'],defaultTasks:[
+      {name:'Activación explosiva',color:'verde',duration:10,rpe:3,type:'drill',dim:'20x20',series:'',ratio:'1:3',obj:'Estímulo neuromuscular'},
+      {name:'5v4 confianza',color:'verde',duration:10,rpe:4,type:'5v4',dim:'40x20',series:'',ratio:'1:3',obj:'Situaciones favorables pre-partido'}
+    ]},
+    {label:'Sáb',md_offset:0,color:'rojo',name:'MATCH DAY',volume:0,objectives:['Competencia'],defaultTasks:[]},
+    {label:'Dom',md_offset:1,color:'verde',name:'Descanso',volume:0,objectives:['Recuperación activa o libre'],defaultTasks:[]}
+  ]
+};
+
+let currentWeek=[];
+let selectedDay=null;
+let selectedColor='rojo';
+let currentMonth=new Date().getMonth();
+let currentYear=new Date().getFullYear();
+let history=JSON.parse(localStorage.getItem('futsal_history')||'[]');
+let weeklyHistory=JSON.parse(localStorage.getItem('futsal_weeks')||'[]');
+
+function initWeek(){
+  const mdSel=document.getElementById('match-day-select').value;
+  currentWeek=JSON.parse(JSON.stringify(DEFAULT_WEEK_TEMPLATES.saturday));
+  const mdOff=getMDOffset(mdSel);
+  const dayNames={saturday:['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],sunday:['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],friday:['Lun','Mar','Mié','Jue','Vie','Sáb','Dom']};
+  const dayColors={saturday:['verde','rojo','naranja','amarillo','verde','rojo','verde'],sunday:['rojo','verde','rojo','naranja','amarillo','verde','rojo'],friday:['verde','rojo','naranja','amarillo','rojo','verde','verde']};
+  currentWeek.forEach((d,i)=>{
+    d.label=dayNames[mdSel][i];
+    d.color=dayColors[mdSel][i];
+    if(d.label==='Sáb'||d.label==='Dom'){if(mdSel==='saturday'&&d.label==='Sáb'){d.color='rojo';d.name='MATCH DAY';}else if(mdSel==='sunday'&&d.label==='Dom'){d.color='rojo';d.name='MATCH DAY';}}
+  });
+}
+
+function rebuildWeek(){initWeek();renderWeek()}
+
+function renderWeek(){
+  const grid=document.getElementById('days-grid');
+  grid.innerHTML='';
+  let totalVol=0,totalTasks=0,totalRpe=0,rpeCount=0;
+  currentWeek.forEach((day,di)=>{
+    const isMatchDay=day.name.includes('MATCH DAY');
+    const isRest=day.name==='Descanso';
+    const col=COLORS[day.color]||COLORS.verde;
+    totalVol+=day.volume;
+    totalTasks+=day.defaultTasks.length;
+    day.defaultTasks.forEach(t=>{totalRpe+=t.rpe;rpeCount++;});
+
+    const tasksHTML=day.defaultTasks.map((t,ti)=>{
+      const tc=COLORS[t.color]||COLORS.verde;
+      return `<div class="task-chip ${tc.chip}">
+        <div class="task-chip-dot ${tc.dot}"></div>
+        <span class="task-chip-name">${t.name}</span>
+        <span class="task-chip-time">${t.duration}min</span>
+        <span class="task-chip-rpe ${tc.rpe_class}">RPE ${t.rpe}</span>
+        <span style="cursor:pointer;opacity:.5" onclick="editTask(${di},${ti})"><i class="ti ti-pencil" style="font-size:12px"></i></span>
+        <span style="cursor:pointer;opacity:.5" onclick="removeTask(${di},${ti})"><i class="ti ti-x" style="font-size:12px"></i></span>
+      </div>`;
+    }).join('');
+
+    const divCard=document.createElement('div');
+    divCard.className='day-card';
+    divCard.innerHTML=`
+      <div class="day-header">
+        <div class="day-dot ${col.dot}"></div>
+        <div class="day-name" style="color:var(--${day.color})">${day.label}</div>
+        ${isMatchDay?`<span class="day-md-badge color-${day.color}">MATCH DAY</span>`:''}
+        ${isRest?`<span class="day-md-badge color-verde">LIBRE</span>`:''}
+        <div class="day-label">${col.emoji} ${col.name} · ${day.name}</div>
+        <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px" onclick="changeDayColor(${di})">Cambiar color</button>
+      </div>
+      <div class="day-body">
+        <div class="day-meta">
+          <div class="meta-item"><div class="meta-label">Volumen</div><div class="meta-value" style="color:var(--${day.color})">${day.volume}<span style="font-size:12px;font-weight:400"> min</span></div></div>
+          <div class="meta-item"><div class="meta-label">RPE esperado</div><div class="meta-value">${col.rpe}</div></div>
+          <div class="meta-item"><div class="meta-label">Tareas</div><div class="meta-value">${day.defaultTasks.length}</div></div>
+          <div class="meta-item" style="flex:1">
+            <div class="meta-label">Objetivos</div>
+            <div style="font-size:11px;color:var(--muted)">${day.objectives.join(' · ')}</div>
+          </div>
+        </div>
+        <div class="tasks-list">${tasksHTML}
+          ${!isRest?`<button class="add-task-btn" onclick="openModal(${di})"><i class="ti ti-plus" style="font-size:13px"></i> Agregar tarea</button>`:''}
+        </div>
+      </div>`;
+    grid.appendChild(divCard);
+  });
+
+  const avgRpe=rpeCount>0?(totalRpe/rpeCount).toFixed(1):'—';
+  document.getElementById('week-totals').innerHTML=`
+    <div class="total-card"><div class="total-label">Volumen total</div><div class="total-value">${totalVol}</div><div class="total-sub">minutos de trabajo</div></div>
+    <div class="total-card"><div class="total-label">Tareas</div><div class="total-value">${totalTasks}</div><div class="total-sub">ejercicios planificados</div></div>
+    <div class="total-card"><div class="total-label">RPE prom.</div><div class="total-value">${avgRpe}</div><div class="total-sub">de todas las tareas</div></div>
+    <div class="total-card"><div class="total-label">Carga estimada</div><div class="total-value">${Math.round(totalVol*(parseFloat(avgRpe)||5)/10)}</div><div class="total-sub">unidades (min×RPE/10)</div></div>
+  `;
+}
+
+function changeDayColor(di){
+  const colors=['verde','amarillo','naranja','rojo'];
+  const cur=colors.indexOf(currentWeek[di].color);
+  currentWeek[di].color=colors[(cur+1)%colors.length];
+  renderWeek();
+}
+
+let editingDay=null,editingTaskIdx=null;
+function openModal(dayIdx){editingDay=dayIdx;editingTaskIdx=null;document.getElementById('t-name').value='';document.getElementById('t-rpe').value=7;document.getElementById('t-rpe-val').textContent='7';document.getElementById('t-objective').value='';document.querySelector('.modal h2').textContent='Nueva tarea';document.getElementById('task-modal').classList.add('open')}
+function closeModal(){document.getElementById('task-modal').classList.remove('open')}
+function selectColor(el){document.querySelectorAll('.color-opt').forEach(e=>e.classList.remove('selected'));el.classList.add('selected');selectedColor=el.dataset.color}
+
+function editTask(di,ti){
+  editingDay=di;editingTaskIdx=ti;
+  const t=currentWeek[di].defaultTasks[ti];
+  document.getElementById('t-name').value=t.name;
+  document.getElementById('t-type').value=t.type||'drill';
+  document.getElementById('t-dim').value=t.dim||'20x20';
+  document.getElementById('t-duration').value=t.duration;
+  document.getElementById('t-rpe').value=t.rpe;
+  document.getElementById('t-rpe-val').textContent=t.rpe;
+  document.getElementById('t-series').value=t.series||'';
+  document.getElementById('t-ratio').value=t.ratio||'1:1';
+  document.getElementById('t-objective').value=t.obj||'';
+  document.querySelectorAll('.color-opt').forEach(e=>{e.classList.remove('selected');if(e.dataset.color===t.color)e.classList.add('selected')});
+  selectedColor=t.color;
+  document.querySelector('.modal h2').textContent='Editar tarea';
+  document.getElementById('task-modal').classList.add('open');
+}
+
+function removeTask(di,ti){currentWeek[di].defaultTasks.splice(ti,1);renderWeek()}
+
+function saveTask(){
+  const name=document.getElementById('t-name').value.trim();
+  if(!name)return;
+  const task={name,color:selectedColor,duration:parseInt(document.getElementById('t-duration').value)||10,rpe:parseInt(document.getElementById('t-rpe').value)||7,type:document.getElementById('t-type').value,dim:document.getElementById('t-dim').value,series:document.getElementById('t-series').value,ratio:document.getElementById('t-ratio').value,obj:document.getElementById('t-objective').value};
+  if(editingTaskIdx!==null){currentWeek[editingDay].defaultTasks[editingTaskIdx]=task;}
+  else{currentWeek[editingDay].defaultTasks.push(task);}
+  recalcDayVolume(editingDay);
+  closeModal();renderWeek();
+}
+
+function recalcDayVolume(di){
+  const day=currentWeek[di];
+  if(day.name.includes('MATCH DAY')||day.name==='Descanso')return;
+  day.volume=day.defaultTasks.reduce((s,t)=>s+t.duration,0);
+}
+
+function saveWeekToHistory(){
+  const totalVol=currentWeek.reduce((s,d)=>s+d.volume,0);
+  const allTasks=currentWeek.flatMap(d=>d.defaultTasks);
+  const avgRpe=allTasks.length>0?(allTasks.reduce((s,t)=>s+t.rpe,0)/allTasks.length).toFixed(1):5;
+  const load=Math.round(totalVol*(parseFloat(avgRpe))/10);
+  const entry={date:new Date().toLocaleDateString('es-AR'),md:document.getElementById('match-day-select').value,volume:totalVol,avgRpe:parseFloat(avgRpe),load,days:currentWeek.map(d=>({label:d.label,color:d.color,volume:d.volume,tasks:d.defaultTasks.length}))};
+  weeklyHistory.unshift(entry);
+  localStorage.setItem('futsal_weeks',JSON.stringify(weeklyHistory));
+  renderDayHistory(entry);
+  alert('Semana guardada en histórico ✓');
+}
+
+function renderDayHistory(entry){
+  history.push({date:entry.date,load:entry.load,avgRpe:entry.avgRpe,volume:entry.volume});
+  localStorage.setItem('futsal_history',JSON.stringify(history));
+}
+
+/* MENSUAL */
+const MONTHS_ES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+function changeMonth(d){currentMonth+=d;if(currentMonth<0){currentMonth=11;currentYear--;}if(currentMonth>11){currentMonth=0;currentYear++;}renderMonthly()}
+
+function renderMonthly(){
+  document.getElementById('month-title').textContent=`${MONTHS_ES[currentMonth]} ${currentYear}`;
+  const firstDay=new Date(currentYear,currentMonth,1).getDay();
+  const offset=(firstDay+6)%7;
+  const daysInMonth=new Date(currentYear,currentMonth+1,0).getDate();
+  const grid=document.getElementById('monthly-grid');
+  grid.innerHTML='';
+  for(let i=0;i<offset;i++){const c=document.createElement('div');c.className='month-cell empty';grid.appendChild(c);}
+  for(let d=1;d<=daysInMonth;d++){
+    const cell=document.createElement('div');
+    cell.className='month-cell';
+    const dateStr=`${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dayData=getDayData(dateStr);
+    const col=dayData?dayData.color:'gray';
+    const colMap={rojo:'#FEF0EF',naranja:'#FEF5E7',amarillo:'#FEFCE8',verde:'#EDFAF2',gray:'#F5F4F0'};
+    const textMap={rojo:'#E8342A',naranja:'#E8780A',amarillo:'#C9A800',verde:'#1A8A4A',gray:'#6B6B6B'};
+    cell.style.background=colMap[col];
+    cell.style.color=textMap[col];
+    cell.style.borderColor=dayData?'currentColor':'var(--border)';
+    cell.innerHTML=`<div class="month-cell-day">${d}</div><div class="month-cell-rpe">${dayData?dayData.rpe:'—'}</div><div class="tooltip">${dayData?dayData.label+' · '+dayData.load+' UA':''}</div>`;
+    grid.appendChild(cell);
+  }
+  renderACWR();
+  renderMonthStats();
+}
+
+function getDayData(dateStr){
+  for(const w of weeklyHistory){
+    if(w.date===new Date(dateStr.replace(/-/g,'/')).toLocaleDateString('es-AR')){
+      return{color:'naranja',rpe:w.avgRpe,load:w.load,label:w.md};
+    }
+  }
+  return null;
+}
+
+function renderACWR(){
+  const h=history;
+  const now=new Date();
+  const acute=h.filter(e=>{const d=parseDate(e.date);return d&&(now-d)/(86400000)<=7}).reduce((s,e)=>s+e.load,0);
+  const chronic4w=h.filter(e=>{const d=parseDate(e.date);return d&&(now-d)/(86400000)<=28}).reduce((s,e)=>s+e.load,0)/4;
+  document.getElementById('acute-load').textContent=Math.round(acute);
+  document.getElementById('chronic-load').textContent=Math.round(chronic4w)||'—';
+  const maxA=Math.max(acute,chronic4w*1.5,1);
+  document.getElementById('acute-bar').style.width=Math.min(100,acute/maxA*100)+'%';
+  document.getElementById('chronic-bar').style.width=Math.min(100,chronic4w/maxA*100)+'%';
+  if(chronic4w>0){
+    const ratio=acute/chronic4w;
+    document.getElementById('acwr-ratio').textContent=ratio.toFixed(2);
+    let zone,zoneBg,zoneColor;
+    if(ratio<0.8){zone='⚠️ Bajo — Riesgo desacondicionamiento';zoneBg='#FEF5E7';zoneColor='#E8780A';}
+    else if(ratio<=1.3){zone='✅ Zona óptima — Carga segura';zoneBg='#EDFAF2';zoneColor='#1A8A4A';}
+    else if(ratio<=1.5){zone='⚠️ Precaución — Carga elevada';zoneBg='#FEF5E7';zoneColor='#E8780A';}
+    else{zone='🔴 Riesgo lesión — Carga excesiva';zoneBg='#FEF0EF';zoneColor='#E8342A';}
+    const zEl=document.getElementById('acwr-zone');
+    zEl.textContent=zone;zEl.style.background=zoneBg;zEl.style.color=zoneColor;
+  }else{document.getElementById('acwr-ratio').textContent='Sin datos';document.getElementById('acwr-zone').textContent='';}
+}
+
+function parseDate(str){try{const p=str.split('/');return new Date(p[2],p[1]-1,p[0]);}catch{return null;}}
+
+function renderMonthStats(){
+  const monthData=weeklyHistory.filter(w=>{const d=parseDate(w.date);return d&&d.getMonth()===currentMonth&&d.getFullYear()===currentYear;});
+  const totalLoad=monthData.reduce((s,w)=>s+w.load,0);
+  const avgRpe=monthData.length>0?(monthData.reduce((s,w)=>s+w.avgRpe,0)/monthData.length).toFixed(1):'—';
+  document.getElementById('month-stats').innerHTML=`
+    <div class="total-card"><div class="total-label">Semanas registradas</div><div class="total-value">${monthData.length}</div></div>
+    <div class="total-card"><div class="total-label">Carga mensual</div><div class="total-value">${totalLoad}</div><div class="total-sub">unidades acumuladas</div></div>
+    <div class="total-card"><div class="total-label">RPE promedio</div><div class="total-value">${avgRpe}</div></div>
+  `;
+}
+
+/* HISTORICO */
+function renderHistorico(){
+  const content=document.getElementById('historico-content');
+  if(!weeklyHistory.length){content.innerHTML='<p style="color:var(--muted);text-align:center;padding:3rem">No hay semanas guardadas aún.</p>';return;}
+  content.innerHTML=`<table class="historico-table">
+    <thead><tr><th>Semana</th><th>MD</th><th>Volumen</th><th>RPE prom.</th><th>Carga UA</th><th>Carga diaria</th></tr></thead>
+    <tbody>${weeklyHistory.map((w,i)=>`<tr>
+      <td><b>${w.date}</b></td>
+      <td><span class="semaforo-pill color-rojo">${w.md.toUpperCase()}</span></td>
+      <td><span style="font-family:var(--font-mono)">${w.volume} min</span></td>
+      <td><span style="font-family:var(--font-mono)">${w.avgRpe}</span></td>
+      <td><span style="font-family:var(--font-mono);font-weight:700">${w.load} UA</span></td>
+      <td>${w.days.map(d=>`<span class="semaforo-pill color-${d.color}" title="${d.label}">${d.label[0]}</span>`).join(' ')}</td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function clearHistory(){if(confirm('¿Borrar todo el histórico?')){weeklyHistory=[];history=[];localStorage.removeItem('futsal_weeks');localStorage.removeItem('futsal_history');renderHistorico();}}
+
+/* TEORIA */
+function renderTeoria(){
+  document.getElementById('teoria-semaforo').innerHTML=`
+    <div class="teoria-card rojo">
+      <div class="teoria-badge color-rojo">🔴 ROJO — Alta carga</div>
+      <h3>Objetivo fisiológico</h3>
+      <p>Alta fatiga acumulada, alto estrés metabólico, gran demanda neuromuscular, trabajo glucolítico fuerte.</p>
+      <h3 style="margin-top:8px">Sensación del jugador</h3>
+      <p>"Termino destruido" · RPE <b>8-10</b></p>
+      <ul class="teoria-list">
+        <li>Transiciones continuas y oleadas</li>
+        <li>4v4 con presión alta</li>
+        <li>RSA / HIIT específico</li>
+        <li>Series largas sin pausa</li>
+      </ul>
+      <p style="margin-top:8px;font-size:11px;color:var(--muted)">Duración útil: 50-80 min de trabajo real · Recuperación >24hs</p>
+    </div>
+    <div class="teoria-card naranja">
+      <div class="teoria-badge color-naranja">🟠 NARANJA — Media/Alta</div>
+      <h3>Objetivo fisiológico</h3>
+      <p>Alta intensidad controlando fatiga, mucha velocidad de juego, potencia aeróbica, toma de decisión rápida.</p>
+      <h3 style="margin-top:8px">Sensación del jugador</h3>
+      <p>"Muy intenso pero recuperable" · RPE <b>6-8</b></p>
+      <ul class="teoria-list">
+        <li>Posesiones dinámicas con presión</li>
+        <li>3v3 competitivo</li>
+        <li>Juego posicional intenso</li>
+        <li>Presión organizada</li>
+      </ul>
+    </div>
+    <div class="teoria-card amarillo">
+      <div class="teoria-badge color-amarillo">🟡 AMARILLO — Media/Baja</div>
+      <h3>Objetivo fisiológico</h3>
+      <p>Activación y ajustes tácticos, velocidad sin gran desgaste, estímulo técnico-coordinativo, mantenimiento.</p>
+      <h3 style="margin-top:8px">Sensación del jugador</h3>
+      <p>"Entrené bien pero fresco" · RPE <b>4-6</b></p>
+      <ul class="teoria-list">
+        <li>Automatizaciones tácticas</li>
+        <li>Posesión táctica pausada</li>
+        <li>Repaso defensivo</li>
+        <li>Coordinación técnica</li>
+      </ul>
+    </div>
+    <div class="teoria-card verde">
+      <div class="teoria-badge color-verde">🟢 VERDE — Priming / Bajo</div>
+      <h3>Objetivo fisiológico</h3>
+      <p>Activación neural, velocidad pura, timing, coordinación, sensación de frescura, potenciación precompetitiva.</p>
+      <h3 style="margin-top:8px">Sensación del jugador</h3>
+      <p>"Termino mejor de lo que empecé" · RPE <b>2-4</b></p>
+      <ul class="teoria-list">
+        <li>Priming y activación explosiva</li>
+        <li>Técnica fina individual</li>
+        <li>ABP explicativo</li>
+        <li>Velocidad corta</li>
+      </ul>
+    </div>
+  `;
+
+  const mdGuides=[
+    {name:'MD-5 (Lunes)',color:'verde',title:'Recuperación activa',content:{trabajar:['Técnica individual de baja intensidad','ABP explicativo','Priming suave','Rondo técnico simple'],evitar:['Cualquier ejercicio con alta densidad','Juegos reducidos intensos','Transiciones']}},
+    {name:'MD-4 (Martes)',color:'rojo',title:'Pico de carga semanal',content:{trabajar:['Transiciones continuas y oleadas','4v4 o 5v5 con presión máxima','RSA / HIIT específico','Juego reducido intenso'],evitar:['Pausas largas explicativas','Trabajo de precisión técnica fina']}},
+    {name:'MD-3 (Miércoles)',color:'naranja',title:'Alta intensidad táctica',content:{trabajar:['Posesión condicionada con presión','Juego posicional dinámico','Superioridades numéricas','Presión organizada'],evitar:['Carga máxima','Repeticiones muy largas']}},
+    {name:'MD-2 (Jueves)',color:'amarillo',title:'Ajuste y automatización',content:{trabajar:['Sistemas defensivos','Automatizaciones ofensivas','ABP detallado','Velocidad de ejecución corta'],evitar:['Alta fatiga','Transiciones de alta intensidad']}},
+    {name:'MD-1 (Viernes)',color:'verde',title:'Priming precompetitivo',content:{trabajar:['Activación neuromuscular explosiva','Situaciones favorables (5v4)','Finalización','Ejercicios de confianza'],evitar:['Cualquier fatiga residual','Series largas','Alta densidad']}},
+  ];
+
+  document.getElementById('md-guides').innerHTML=mdGuides.map(md=>`
+    <div class="md-guide">
+      <div class="md-guide-header" onclick="toggleGuide(this)">
+        <div class="day-dot dot-${md.color}" style="width:10px;height:10px;border-radius:50%;background:var(--${md.color})"></div>
+        <h3>${md.name} — <span style="color:var(--${md.color})">${md.title}</span></h3>
+        <i class="ti ti-chevron-down" style="color:var(--muted);font-size:16px"></i>
+      </div>
+      <div class="md-guide-body">
+        <div class="md-guide-grid">
+          <div>
+            <h4>✅ Trabajar</h4>
+            <ul class="teoria-list">${md.content.trabajar.map(t=>`<li>${t}</li>`).join('')}</ul>
+          </div>
+          <div>
+            <h4>❌ Evitar</h4>
+            <ul class="teoria-list">${md.content.evitar.map(t=>`<li>${t}</li>`).join('')}</ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('teoria-tareas').innerHTML=`
+    <div class="teoria-card" style="border-left-color:var(--muted)">
+      <h3 style="margin-bottom:8px">Tecnificación (Drill / Analítico)</h3>
+      <p>Trabajo individual o pequeño grupo sin oposición real.</p>
+      <ul class="teoria-list">
+        <li>🟢 Verde: técnica individual libre</li>
+        <li>🟡 Amarillo: automatización con oposición pasiva</li>
+        <li>🔴 Rojo: RSA / HIIT específico</li>
+      </ul>
+    </div>
+    <div class="teoria-card" style="border-left-color:var(--muted)">
+      <h3 style="margin-bottom:8px">Reducidos (1v1 → 5v5)</h3>
+      <p>Mayor jugadores = más carga táctica. Menos jugadores = más carga individual.</p>
+      <ul class="teoria-list">
+        <li>1v1/2v2: 🟠-🔴 alta demanda individual</li>
+        <li>3v3: 🟠 bilateral intenso</li>
+        <li>4v4: 🔴 máxima carga si hay presión</li>
+        <li>5v5 táctico: 🟡 · competitivo: 🔴</li>
+      </ul>
+    </div>
+    <div class="teoria-card" style="border-left-color:var(--muted)">
+      <h3 style="margin-bottom:8px">Transiciones</h3>
+      <p>Las tareas MÁS fatigosas del futsal. Combinan sprint + frenada + cambio de dirección + decisión.</p>
+      <ul class="teoria-list">
+        <li>🟡 Cortas con pausa: técnico-coordinativo</li>
+        <li>🟠 Ida y vuelta 3v2: alta intensidad</li>
+        <li>🔴 Oleadas continuas: máxima fatiga</li>
+      </ul>
+    </div>
+    <div class="teoria-card" style="border-left-color:var(--muted)">
+      <h3 style="margin-bottom:8px">Balón Parado (ABP)</h3>
+      <p>Baja carga física, alta carga cognitiva-táctica.</p>
+      <ul class="teoria-list">
+        <li>🟢 Verde: explicativo y repaso</li>
+        <li>🟡 Amarillo: repetición moderada</li>
+        <li>🟠 Naranja: competitivo dinámico</li>
+      </ul>
+    </div>
+    <div class="teoria-card" style="border-left-color:var(--muted)">
+      <h3 style="margin-bottom:8px">Situaciones especiales (5v4 / 4v3)</h3>
+      <p>Alta intensidad táctica. El equipo en inferioridad trabaja más.</p>
+      <ul class="teoria-list">
+        <li>🟡 Amarillo: explicativo y con pausa</li>
+        <li>🟠 Naranja: dinámico competitivo</li>
+        <li>🔴 Rojo: continuo con transición</li>
+      </ul>
+    </div>
+    <div class="teoria-card" style="border-left-color:var(--muted)">
+      <h3 style="margin-bottom:8px">Variables que aumentan la carga</h3>
+      <p>La carga real no depende solo de correr. El futsal fatiga desde lo neuromuscular y cognitivo.</p>
+      <ul class="teoria-list">
+        <li>Espacio grande → más metros</li>
+        <li>Menos toques → más intensidad neural</li>
+        <li>Transición inmediata → máxima fatiga</li>
+        <li>Relación 2:1 trabajo/pausa → 🔴</li>
+        <li>Alta presión + decisión rápida → 🟠-🔴</li>
+      </ul>
+    </div>
+  `;
+}
+
+function toggleGuide(header){
+  const body=header.nextElementSibling;
+  body.classList.toggle('open');
+  header.querySelector('.ti-chevron-down').style.transform=body.classList.contains('open')?'rotate(180deg)':'';
+}
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t=>{if(t.textContent.toLowerCase().includes(id.substring(0,4)))t.classList.add('active');});
+  if(id==='mensual')renderMonthly();
+  if(id==='historico')renderHistorico();
+  if(id==='teoria')renderTeoria();
+}
+
+document.querySelectorAll('.nav-tab').forEach((t,i)=>{
+  const ids=['semana','mensual','historico','teoria'];
+  t.onclick=()=>showPage(ids[i]);
+});
+
+document.getElementById('task-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+initWeek();
+renderWeek();
+</script>
+</body>
+</html>
