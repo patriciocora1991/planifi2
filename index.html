@@ -4,313 +4,358 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FutsalLoad — Control de Carga</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Unbounded:wght@400;600;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --rojo:#E8342A;--rojo-bg:#FEF0EF;--rojo-border:#F5A8A4;
-  --naranja:#E8780A;--naranja-bg:#FEF5E7;--naranja-border:#F5C97A;
-  --amarillo:#C9A800;--amarillo-bg:#FEFCE8;--amarillo-border:#F0DE6A;
-  --verde:#1A8A4A;--verde-bg:#EDFAF2;--verde-border:#82D4A8;
-  --dark:#0F0F0F;--surface:#F5F4F0;--card:#FFFFFF;
-  --text:#1A1A1A;--muted:#6B6B6B;--border:#E0DED8;
-  --font-display:'Unbounded',sans-serif;
-  --font-body:'DM Sans',sans-serif;
-  --font-mono:'DM Mono',monospace;
+  --r:#D93025;--rbg:#FEF0EF;--rbrd:#F5A8A4;
+  --o:#C96000;--obg:#FEF5E7;--obrd:#F0C060;
+  --y:#A07800;--ybg:#FEFCE8;--ybrd:#DDD040;
+  --g:#128038;--gbg:#EDFAF2;--gbrd:#68C490;
+  --dk:#0F0F0F;--sf:#F3F2EE;--cd:#FFFFFF;
+  --tx:#1A1A1A;--mt:#6B6B6B;--bd:#E0DED8;
+  --FD:'Unbounded',sans-serif;--FB:'DM Sans',sans-serif;--FM:'DM Mono',monospace;
 }
-body{font-family:var(--font-body);background:var(--surface);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6}
+body{font-family:var(--FB);background:var(--sf);color:var(--tx);min-height:100vh;font-size:14px}
 
 /* NAV */
-nav{background:var(--dark);padding:0 2rem;display:flex;align-items:center;gap:0;border-bottom:1px solid #222;position:sticky;top:0;z-index:100}
-.nav-brand{font-family:var(--font-display);font-size:13px;font-weight:800;color:#fff;letter-spacing:-0.02em;padding:1rem 1.5rem 1rem 0;border-right:1px solid #333;margin-right:1rem;white-space:nowrap}
-.nav-brand span{color:var(--naranja)}
-.nav-tabs{display:flex;gap:0}
-.nav-tab{font-family:var(--font-body);font-size:13px;font-weight:500;color:#888;padding:1.1rem 1.2rem;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
-.nav-tab:hover{color:#ddd}
-.nav-tab.active{color:#fff;border-bottom-color:var(--naranja)}
+nav{background:var(--dk);display:flex;align-items:center;padding:0 1.5rem;position:sticky;top:0;z-index:200;border-bottom:1px solid #222}
+.brand{font-family:var(--FD);font-size:12px;font-weight:800;color:#fff;padding:1rem 1.2rem 1rem 0;border-right:1px solid #333;margin-right:1rem;white-space:nowrap}
+.brand span{color:var(--o)}
+.tabs{display:flex;overflow-x:auto}
+.tab{font-size:13px;font-weight:500;color:#777;padding:.95rem 1rem;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:.2s}
+.tab:hover{color:#ccc}
+.tab.active{color:#fff;border-bottom-color:var(--o)}
 
-/* LAYOUT */
-.page{display:none;padding:2rem;max-width:1400px;margin:0 auto}
+/* PAGES */
+.page{display:none;padding:1.5rem;max-width:1440px;margin:0 auto}
 .page.active{display:block}
 
-/* SEMANA TIPO */
-.week-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap}
-.week-header h1{font-family:var(--font-display);font-size:18px;font-weight:600;letter-spacing:-0.03em}
-.match-day-selector{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 12px}
-.match-day-selector label{font-size:12px;color:var(--muted);font-weight:500}
-.match-day-selector select{border:none;background:transparent;font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--text);cursor:pointer;outline:none}
+/* CONTROLS BAR */
+.cbar{display:flex;align-items:center;gap:10px;margin-bottom:1.2rem;flex-wrap:wrap}
+.cbar h1{font-family:var(--FD);font-size:15px;font-weight:600;letter-spacing:-.03em;margin-right:auto}
+.cgroup{display:flex;align-items:center;gap:6px;background:var(--cd);border:1px solid var(--bd);border-radius:8px;padding:5px 10px}
+.cgroup label{font-size:10px;color:var(--mt);font-weight:700;white-space:nowrap;text-transform:uppercase;letter-spacing:.05em}
+.cgroup select,.cgroup input[type=date]{border:none;background:transparent;font-family:var(--FB);font-size:13px;font-weight:600;color:var(--tx);outline:none;cursor:pointer}
 
-/* DAYS GRID */
-.days-grid{display:grid;gap:12px}
-.day-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.day-header{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}
-.day-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.day-name{font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase}
-.day-label{font-size:12px;color:var(--muted);margin-left:auto}
-.day-md-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;font-family:var(--font-mono)}
-.day-body{padding:14px 16px}
-.day-meta{display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap}
-.meta-item{display:flex;flex-direction:column;gap:2px}
-.meta-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;font-weight:500}
-.meta-value{font-size:15px;font-weight:600;font-family:var(--font-mono)}
-.tasks-list{display:flex;flex-direction:column;gap:6px}
-.task-chip{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;font-size:12px;border:1px solid}
-.task-chip-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.task-chip-name{flex:1;font-weight:500}
-.task-chip-time{font-family:var(--font-mono);font-size:11px;color:var(--muted)}
-.task-chip-rpe{font-family:var(--font-mono);font-size:10px;padding:1px 5px;border-radius:3px;font-weight:600}
-.add-task-btn{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:6px;font-size:12px;color:var(--muted);cursor:pointer;border:1px dashed var(--border);background:transparent;width:100%;text-align:left;margin-top:4px;font-family:var(--font-body)}
-.add-task-btn:hover{background:var(--surface);color:var(--text)}
+/* WEEK STRIP (mini calendar) */
+.strip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:1.2rem}
+.sday{background:var(--cd);border:1.5px solid var(--bd);border-radius:10px;padding:9px 6px;text-align:center;cursor:pointer;transition:.18s}
+.sday:hover{transform:translateY(-2px)}
+.sday.md{border-width:2px}
+.sday-name{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mt);margin-bottom:3px}
+.sday-circle{width:22px;height:22px;border-radius:50%;margin:0 auto 3px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:800}
+.sday-vol{font-family:var(--FM);font-size:11px;font-weight:700;margin-top:2px}
+.sday-obj{font-size:8px;color:var(--mt);line-height:1.3;margin-top:1px}
 
-/* COLORS */
-.color-rojo{background:var(--rojo-bg);border-color:var(--rojo-border);color:var(--rojo)}
-.color-naranja{background:var(--naranja-bg);border-color:var(--naranja-border);color:var(--naranja)}
-.color-amarillo{background:var(--amarillo-bg);border-color:var(--amarillo-border);color:var(--amarillo)}
-.color-verde{background:var(--verde-bg);border-color:var(--verde-border);color:var(--verde)}
-.dot-rojo{background:var(--rojo)}
-.dot-naranja{background:var(--naranja)}
-.dot-amarillo{background:var(--amarillo)}
-.dot-verde{background:var(--verde)}
-.rpe-rojo{background:var(--rojo-bg);color:var(--rojo)}
-.rpe-naranja{background:var(--naranja-bg);color:var(--naranja)}
-.rpe-amarillo{background:var(--amarillo-bg);color:var(--amarillo)}
-.rpe-verde{background:var(--verde-bg);color:var(--verde)}
+/* TOTALS */
+.totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:1rem}
+.tc{background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:10px 12px}
+.tlb{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--mt);font-weight:700;margin-bottom:2px}
+.tv{font-size:22px;font-weight:700;font-family:var(--FM);letter-spacing:-.03em;line-height:1.1}
+.ts{font-size:10px;color:var(--mt)}
 
-/* TOTALS STRIP */
-.week-totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.5rem}
-.total-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
-.total-label{font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);font-weight:500;margin-bottom:4px}
-.total-value{font-size:22px;font-weight:600;font-family:var(--font-mono);letter-spacing:-0.03em}
-.total-sub{font-size:11px;color:var(--muted)}
+/* RPE RELATIVO */
+.rpe-panel{background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;margin-bottom:1rem}
+.rpe-panel-title{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--mt);font-weight:700;margin-bottom:10px}
+.rpe-rel-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.rrd{text-align:center}
+.rrd-name{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.rrd-bars{height:44px;position:relative;background:var(--sf);border-radius:4px;overflow:hidden;margin-bottom:3px}
+.rrd-bar-teo{position:absolute;bottom:0;width:100%;border-radius:3px;opacity:.3}
+.rrd-bar-real{position:absolute;bottom:0;width:100%;border-radius:3px}
+.rrd-val{font-family:var(--FM);font-size:12px;font-weight:700}
+.rrd-teo{font-size:9px;color:var(--mt)}
+.rrd-diff{font-size:9px;font-weight:700;margin-top:1px}
+
+/* DAYS */
+.dgrid{display:flex;flex-direction:column;gap:10px}
+.dcard{background:var(--cd);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
+
+/* DAY HEADER — volume editing lives here */
+.dhead{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--bd);flex-wrap:wrap}
+.dhead-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.dhead-label{font-family:var(--FD);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.dhead-name{flex:1;min-width:80px;font-size:12px;color:var(--mt);border:none;background:transparent;font-family:var(--FB);outline:none}
+.dhead-name:focus{color:var(--tx)}
+.md-pill{font-size:9px;font-weight:800;padding:2px 7px;border-radius:4px;background:var(--rbg);color:var(--r);font-family:var(--FM);border:1px solid var(--rbrd)}
+
+/* ★ THE VOLUME EDITOR — always visible, always editable */
+.vol-editor{display:flex;align-items:center;gap:5px;background:var(--sf);border:1px solid var(--bd);border-radius:7px;padding:4px 8px;flex-shrink:0}
+.vol-editor label{font-size:9px;color:var(--mt);font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.vol-input{width:52px;font-family:var(--FM);font-size:15px;font-weight:700;border:none;background:transparent;text-align:center;outline:none;color:var(--tx)}
+.vol-input:focus{color:var(--o)}
+.vol-unit{font-size:10px;color:var(--mt);font-weight:600}
+.vol-rpe-sep{width:1px;height:18px;background:var(--bd);margin:0 2px}
+.vol-rpe-lbl{font-size:9px;color:var(--mt);font-weight:700;text-transform:uppercase;white-space:nowrap}
+.vol-ua{font-family:var(--FM);font-size:13px;font-weight:700;color:var(--mt)}
+
+.dhead-settings{background:none;border:1px solid var(--bd);border-radius:6px;padding:4px 7px;cursor:pointer;color:var(--mt);font-size:13px;line-height:1;transition:.2s}
+.dhead-settings:hover{background:var(--sf);color:var(--tx)}
+
+/* DAY BODY */
+.dbody{padding:12px 14px}
+.dmeta{display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap;align-items:flex-start}
+.mi{display:flex;flex-direction:column;gap:1px}
+.mlb{font-size:9px;color:var(--mt);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.mv{font-size:13px;font-weight:700;font-family:var(--FM)}
+.dobj{font-size:10px;color:var(--mt);flex:1}
+
+/* TASKS */
+.tlist{display:flex;flex-direction:column;gap:5px}
+.trow{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:8px 10px;display:flex;align-items:flex-start;gap:7px}
+.trow-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.trow-body{flex:1;min-width:0}
+.trow-name{font-size:12px;font-weight:600;margin-bottom:2px}
+.trow-meta{font-size:11px;color:var(--mt);display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.trow-actions{display:flex;gap:3px;flex-shrink:0}
+.ibtn{background:none;border:none;cursor:pointer;color:var(--mt);padding:3px;border-radius:4px;font-size:13px;line-height:1}
+.ibtn:hover{background:var(--bd);color:var(--tx)}
+.rpeb{font-family:var(--FM);font-size:10px;padding:1px 6px;border-radius:4px;font-weight:700}
+.physb{font-size:9px;padding:1px 5px;border-radius:3px;background:var(--cd);border:1px solid var(--bd);color:var(--mt);font-weight:600}
+.rpe-real-w{display:flex;align-items:center;gap:3px;font-size:10px;color:var(--mt)}
+.rpe-ri{width:38px;font-family:var(--FM);font-size:11px;border:1px solid var(--bd);border-radius:4px;padding:1px 4px;text-align:center;background:var(--cd);outline:none}
+.rpe-ri:focus{border-color:var(--o)}
+.add-btn{display:flex;align-items:center;gap:5px;padding:6px 10px;border-radius:7px;font-size:11px;color:var(--mt);cursor:pointer;border:1.5px dashed var(--bd);background:transparent;width:100%;margin-top:4px;font-family:var(--FB);transition:.2s}
+.add-btn:hover{background:var(--sf);color:var(--tx);border-color:var(--o)}
+
+/* COLOR HELPERS */
+.cr{color:var(--r)}.co{color:var(--o)}.cy{color:var(--y)}.cg{color:var(--g)}
+.bgr{background:var(--rbg)}.bgo{background:var(--obg)}.bgy{background:var(--ybg)}.bgg{background:var(--gbg)}
+.bdr{border-color:var(--rbrd)}.bdo{border-color:var(--obrd)}.bdy{border-color:var(--ybrd)}.bdg{border-color:var(--gbrd)}
+.dotr{background:var(--r)}.doto{background:var(--o)}.doty{background:var(--y)}.dotg{background:var(--g)}
 
 /* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:none;align-items:center;justify-content:center;padding:1rem}
-.modal-overlay.open{display:flex}
-.modal{background:var(--card);border-radius:16px;padding:2rem;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;position:relative}
-.modal h2{font-family:var(--font-display);font-size:15px;font-weight:600;margin-bottom:1.5rem;letter-spacing:-0.02em}
-.form-row{margin-bottom:1rem}
-.form-row label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:6px}
-.form-row input,.form-row select,.form-row textarea{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-family:var(--font-body);font-size:13px;background:var(--surface);color:var(--text);outline:none;transition:border-color .2s}
-.form-row input:focus,.form-row select:focus,.form-row textarea:focus{border-color:var(--naranja)}
-.form-row textarea{resize:vertical;min-height:60px}
-.color-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.color-opt{padding:8px;border-radius:8px;cursor:pointer;text-align:center;font-size:11px;font-weight:600;border:2px solid transparent;transition:all .2s}
-.color-opt.selected{border-color:var(--dark)}
-.color-opt.rojo{background:var(--rojo-bg);color:var(--rojo)}
-.color-opt.naranja{background:var(--naranja-bg);color:var(--naranja)}
-.color-opt.amarillo{background:var(--amarillo-bg);color:var(--amarillo)}
-.color-opt.verde{background:var(--verde-bg);color:var(--verde)}
-.modal-actions{display:flex;gap:8px;margin-top:1.5rem}
-.btn{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--font-body);transition:all .2s}
-.btn-primary{background:var(--dark);color:#fff}
-.btn-primary:hover{background:#333}
-.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
-.btn-secondary:hover{background:var(--border)}
-.btn-danger{background:var(--rojo-bg);color:var(--rojo);border:1px solid var(--rojo-border)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:none;align-items:flex-start;justify-content:center;padding:1.5rem 1rem;overflow-y:auto}
+.ov.open{display:flex}
+.modal{background:var(--cd);border-radius:16px;padding:1.8rem;width:100%;max-width:500px;margin:auto}
+.mtitle{font-family:var(--FD);font-size:13px;font-weight:700;margin-bottom:1.2rem;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+.fr{margin-bottom:.9rem}
+.fr label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mt);margin-bottom:5px}
+.fr input,.fr select,.fr textarea{width:100%;padding:7px 10px;border:1px solid var(--bd);border-radius:7px;font-family:var(--FB);font-size:13px;background:var(--sf);color:var(--tx);outline:none;transition:.2s}
+.fr input:focus,.fr select:focus,.fr textarea:focus{border-color:var(--o)}
+.fr textarea{resize:vertical;min-height:48px}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.9rem}
+.fr2 .fr{margin-bottom:0}
+.cpick{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.copt{padding:7px 3px;border-radius:7px;cursor:pointer;text-align:center;font-size:10px;font-weight:700;border:2px solid transparent;transition:.2s;line-height:1.4}
+.copt.sel{border-color:var(--dk);transform:scale(1.04)}
+.copt.or{background:var(--rbg);color:var(--r)}
+.copt.oo{background:var(--obg);color:var(--o)}
+.copt.oy{background:var(--ybg);color:var(--y)}
+.copt.og{background:var(--gbg);color:var(--g)}
+.hint{font-size:11px;padding:6px 10px;border-radius:6px;margin-top:6px;font-weight:600;display:none}
+.mactions{display:flex;gap:8px;margin-top:1.2rem;flex-wrap:wrap}
+.btn{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--bd);font-family:var(--FB);background:var(--sf);color:var(--tx);display:inline-flex;align-items:center;gap:5px;transition:.2s}
+.btn:hover{background:var(--bd)}
+.btn.p{background:var(--dk);color:#fff;border-color:var(--dk)}
+.btn.p:hover{background:#333}
+.btn.d{background:var(--rbg);color:var(--r);border-color:var(--rbrd)}
+.btn.sm{padding:5px 10px;font-size:11px}
 
 /* MENSUAL */
-.monthly-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:2rem}
-.month-cell{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .2s;font-family:var(--font-mono);position:relative}
-.month-cell:hover{transform:scale(1.05)}
-.month-cell.empty{background:transparent;border:none;cursor:default}
-.month-cell.empty:hover{transform:none}
-.month-cell-day{font-size:10px;font-weight:400;opacity:.7;margin-bottom:2px}
-.month-cell-rpe{font-size:13px;font-weight:700}
-.month-cell-dots{display:flex;gap:2px;margin-top:2px}
-.month-cell-dot{width:4px;height:4px;border-radius:50%}
-.month-nav{display:flex;align-items:center;gap:12px;margin-bottom:1rem}
-.month-nav h2{font-family:var(--font-display);font-size:15px;font-weight:600;flex:1}
-.month-nav-btn{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:6px 10px;cursor:pointer;font-size:16px;line-height:1}
-.month-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:1.5rem}
-.weekday-labels{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px}
-.weekday-label{text-align:center;font-size:10px;color:var(--muted);font-weight:600;letter-spacing:0.05em}
+.mgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:1.5rem}
+.mcell{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid var(--bd);background:var(--cd);cursor:pointer;position:relative;transition:.18s;font-family:var(--FM)}
+.mcell:hover{transform:scale(1.06);z-index:2}
+.mcell.emp{background:transparent;border:none;cursor:default}
+.mcell.emp:hover{transform:none}
+.mcell-n{font-size:9px;opacity:.6;margin-bottom:1px}
+.mcell-e{font-size:13px}
+.mcell-ua{font-size:9px;opacity:.7;margin-top:1px}
+.mtip{position:absolute;background:var(--dk);color:#fff;font-size:9px;padding:4px 7px;border-radius:5px;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);white-space:nowrap;pointer-events:none;opacity:0;transition:.2s;z-index:10;font-family:var(--FM)}
+.mcell:hover .mtip{opacity:1}
+.mnav{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
+.mnav h2{font-family:var(--FD);font-size:13px;font-weight:700;flex:1;letter-spacing:-.02em}
+.mnbtn{background:var(--cd);border:1px solid var(--bd);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;line-height:1}
+.wdlbl{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px}
+.wdl{text-align:center;font-size:9px;color:var(--mt);font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.mstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:1.2rem}
 
-/* CARGA AGUDA/CRÓNICA */
-.acwr-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem}
-.acwr-title{font-family:var(--font-display);font-size:13px;font-weight:600;margin-bottom:1rem;letter-spacing:-0.02em}
-.acwr-bar{height:12px;border-radius:6px;background:var(--border);position:relative;margin:8px 0;overflow:hidden}
-.acwr-fill{height:100%;border-radius:6px;transition:width .5s ease}
-.acwr-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:2px}
-.acwr-ratio-big{font-size:36px;font-weight:700;font-family:var(--font-mono);letter-spacing:-0.04em}
-.acwr-zone{font-size:12px;font-weight:600;padding:3px 10px;border-radius:5px;display:inline-block;margin-top:4px}
-.acwr-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+/* ACWR */
+.acwr-box{background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:1.4rem;margin-bottom:1.5rem}
+.acwr-box h3{font-family:var(--FD);font-size:11px;font-weight:700;margin-bottom:1rem;letter-spacing:-.01em}
+.abar{height:10px;border-radius:5px;background:var(--bd);overflow:hidden;margin:5px 0}
+.afill{height:100%;border-radius:5px;transition:width .5s}
+.agrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+.aratio{font-size:30px;font-weight:700;font-family:var(--FM);letter-spacing:-.04em;line-height:1}
+.azone{font-size:11px;font-weight:700;padding:3px 10px;border-radius:5px;display:inline-block;margin-top:5px}
+.ainfo{font-size:10px;color:var(--mt);margin-top:5px;line-height:1.5}
 
 /* TEORIA */
-.teoria-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
-.teoria-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.4rem;border-left:4px solid}
-.teoria-card.rojo{border-left-color:var(--rojo)}
-.teoria-card.naranja{border-left-color:var(--naranja)}
-.teoria-card.amarillo{border-left-color:var(--amarillo)}
-.teoria-card.verde{border-left-color:var(--verde)}
-.teoria-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:5px;display:inline-block;margin-bottom:10px;font-family:var(--font-mono)}
-.teoria-card h3{font-family:var(--font-display);font-size:13px;font-weight:600;margin-bottom:8px;letter-spacing:-0.02em}
-.teoria-card p{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:8px}
-.teoria-list{list-style:none;display:flex;flex-direction:column;gap:4px}
-.teoria-list li{font-size:12px;display:flex;align-items:flex-start;gap:6px;color:var(--text)}
-.teoria-list li::before{content:'→';font-size:11px;margin-top:1px;flex-shrink:0;opacity:.5}
-.md-guide{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:14px}
-.md-guide-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;cursor:pointer}
-.md-guide-header h3{font-family:var(--font-display);font-size:12px;font-weight:600;flex:1;letter-spacing:-0.01em}
-.md-guide-body{padding:16px;display:none}
-.md-guide-body.open{display:block}
-.md-guide-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px}
-.md-guide-section h4{font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);font-weight:600;margin-bottom:6px}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.tcard{background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:1.2rem;border-left:4px solid}
+.tbadge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;display:inline-block;margin-bottom:8px;font-family:var(--FM)}
+.tcard h3{font-family:var(--FD);font-size:11px;font-weight:700;margin-bottom:6px;letter-spacing:-.01em}
+.tcard p,.tcard li{font-size:11px;color:var(--mt);line-height:1.6}
+.tcard ul{list-style:none;display:flex;flex-direction:column;gap:3px;padding:0}
+.tcard li{display:flex;align-items:flex-start;gap:5px;color:var(--tx)}
+.tcard li::before{content:'→';font-size:10px;margin-top:1px;flex-shrink:0;opacity:.4}
+.mdg{background:var(--cd);border:1px solid var(--bd);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.mdgh{padding:11px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:.15s}
+.mdgh:hover{background:var(--sf)}
+.mdgh h3{font-family:var(--FD);font-size:10px;font-weight:700;flex:1;letter-spacing:-.01em}
+.mdgb{padding:14px;display:none;border-top:1px solid var(--bd)}
+.mdgb.open{display:block}
+.mdgg{display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:11px}
+.mdgh4{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--mt);font-weight:700;margin-bottom:5px}
+.chev{transition:transform .25s}
+.ibox{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;font-size:11px;color:var(--mt);line-height:1.6;margin-bottom:10px}
 
-/* HISTORICO */
-.historico-table{width:100%;border-collapse:collapse;font-size:13px}
-.historico-table th{text-align:left;padding:8px 12px;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);font-weight:600;border-bottom:1px solid var(--border)}
-.historico-table td{padding:9px 12px;border-bottom:1px solid var(--border)}
-.historico-table tr:hover td{background:var(--surface)}
-.semaforo-pill{font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;font-family:var(--font-mono);display:inline-block}
+/* HIST */
+.htw{overflow-x:auto}
+.htab{width:100%;border-collapse:collapse;font-size:12px}
+.htab th{text-align:left;padding:8px 10px;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--mt);font-weight:700;border-bottom:1px solid var(--bd);white-space:nowrap}
+.htab td{padding:8px 10px;border-bottom:1px solid var(--bd);vertical-align:middle}
+.htab tr:hover td{background:var(--sf)}
+.spill{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;font-family:var(--FM);display:inline-block}
 
-/* SECTION TITLES */
-.section-title{font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:-0.02em;margin-bottom:1rem;margin-top:1.5rem}
-.section-title:first-child{margin-top:0}
+.stitle{font-family:var(--FD);font-size:13px;font-weight:700;letter-spacing:-.02em;margin-bottom:.9rem;margin-top:1.5rem}
+.stitle:first-child{margin-top:0}
 
-/* tooltip */
-.tooltip{position:absolute;background:var(--dark);color:#fff;font-size:11px;padding:4px 8px;border-radius:5px;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s;font-family:var(--font-mono)}
-.month-cell:hover .tooltip{opacity:1}
-
-/* responsive */
-@media(max-width:700px){
-  .days-grid{grid-template-columns:1fr}
-  .acwr-grid{grid-template-columns:1fr}
-  .md-guide-grid{grid-template-columns:1fr}
-  nav{flex-wrap:wrap;padding:.5rem 1rem}
-  .nav-brand{border-right:none;padding-right:0}
-  .nav-tabs{overflow-x:auto;width:100%}
+@media(max-width:720px){
+  .agrid,.mdgg{grid-template-columns:1fr}
+  .fr2{grid-template-columns:1fr}
   .page{padding:1rem}
+  nav{padding:0 .8rem}
+  .sday-obj{display:none}
 }
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="nav-brand">FUTSAL<span>LOAD</span></div>
-  <div class="nav-tabs">
-    <div class="nav-tab active" onclick="showPage('semana')">Semana tipo</div>
-    <div class="nav-tab" onclick="showPage('mensual')">Mensual</div>
-    <div class="nav-tab" onclick="showPage('historico')">Histórico</div>
-    <div class="nav-tab" onclick="showPage('teoria')">Teoría</div>
+  <div class="brand">FUTSAL<span>LOAD</span></div>
+  <div class="tabs">
+    <div class="tab active" data-page="semana">Semana</div>
+    <div class="tab" data-page="mensual">Mensual</div>
+    <div class="tab" data-page="historico">Histórico</div>
+    <div class="tab" data-page="teoria">Teoría</div>
   </div>
 </nav>
 
-<!-- PAGE: SEMANA -->
+<!-- ═══════ SEMANA ═══════ -->
 <div class="page active" id="page-semana">
-  <div class="week-header">
+  <div class="cbar">
     <h1>Semana tipo</h1>
-    <div class="match-day-selector">
-      <label>Match Day</label>
-      <select id="match-day-select" onchange="rebuildWeek()">
-        <option value="saturday">Sábado (MD)</option>
-        <option value="sunday">Domingo (MD)</option>
-        <option value="friday">Viernes (MD)</option>
+    <div class="cgroup">
+      <label>Semana del</label>
+      <input type="date" id="week-date">
+    </div>
+    <div class="cgroup">
+      <label>Plantilla</label>
+      <select id="tmpl-sel" onchange="applyTemplate()">
+        <option value="sabado">MD Sábado</option>
+        <option value="domingo">MD Domingo</option>
+        <option value="viernes">MD Viernes</option>
+        <option value="doble">Doble fecha (Mié + Sáb)</option>
       </select>
     </div>
-    <button class="btn btn-primary" onclick="saveWeekToHistory()">
-      <i class="ti ti-device-floppy"></i> Guardar semana
-    </button>
+    <button class="btn p sm" onclick="saveWeek()"><i class="ti ti-device-floppy"></i> Guardar semana</button>
   </div>
 
-  <div class="week-totals" id="week-totals"></div>
-  <div class="days-grid" id="days-grid"></div>
+  <div class="strip" id="week-strip"></div>
+  <div class="totals" id="week-totals"></div>
+  <div class="rpe-panel">
+    <div class="rpe-panel-title">RPE por día — teórico (barra clara) vs real percibido (barra sólida)</div>
+    <div class="rpe-rel-grid" id="rpe-rel"></div>
+  </div>
+  <div class="dgrid" id="days-grid"></div>
 </div>
 
-<!-- PAGE: MENSUAL -->
+<!-- ═══════ MENSUAL ═══════ -->
 <div class="page" id="page-mensual">
-  <div class="month-nav">
-    <button class="month-nav-btn" onclick="changeMonth(-1)">‹</button>
+  <div class="mnav">
+    <button class="mnbtn" onclick="changeMonth(-1)">‹</button>
     <h2 id="month-title"></h2>
-    <button class="month-nav-btn" onclick="changeMonth(1)">›</button>
+    <button class="mnbtn" onclick="changeMonth(1)">›</button>
   </div>
-  <div class="month-stats" id="month-stats"></div>
-  <div class="weekday-labels">
-    <div class="weekday-label">Lun</div><div class="weekday-label">Mar</div>
-    <div class="weekday-label">Mié</div><div class="weekday-label">Jue</div>
-    <div class="weekday-label">Vie</div><div class="weekday-label">Sáb</div>
-    <div class="weekday-label">Dom</div>
+  <div class="mstats" id="month-stats"></div>
+  <div class="wdlbl">
+    <div class="wdl">Lun</div><div class="wdl">Mar</div><div class="wdl">Mié</div>
+    <div class="wdl">Jue</div><div class="wdl">Vie</div><div class="wdl">Sáb</div><div class="wdl">Dom</div>
   </div>
-  <div class="monthly-grid" id="monthly-grid"></div>
-
-  <div class="acwr-section">
-    <div class="acwr-title">Carga Aguda vs Crónica (ACWR)</div>
-    <div class="acwr-grid">
+  <div class="mgrid" id="monthly-grid"></div>
+  <div class="acwr-box">
+    <h3>Carga Aguda / Crónica — Índice ACWR</h3>
+    <div class="agrid">
       <div>
-        <div class="meta-label">Carga aguda (7 días)</div>
-        <div class="total-value" id="acute-load">—</div>
-        <div class="acwr-bar"><div class="acwr-fill" id="acute-bar" style="background:var(--naranja)"></div></div>
-        <div class="total-sub">RPE acumulado últimos 7 días</div>
+        <div class="mlb">Carga aguda (7 días)</div>
+        <div class="tv" id="acute-v" style="font-size:20px">—</div>
+        <div class="abar"><div class="afill" id="acute-bar" style="background:var(--o);width:0"></div></div>
+        <div class="ts">Unidades de carga acumuladas</div>
       </div>
       <div>
-        <div class="meta-label">Carga crónica (28 días)</div>
-        <div class="total-value" id="chronic-load">—</div>
-        <div class="acwr-bar"><div class="acwr-fill" id="chronic-bar" style="background:var(--verde)"></div></div>
-        <div class="total-sub">Promedio semanal últimas 4 semanas</div>
+        <div class="mlb">Carga crónica (28 días)</div>
+        <div class="tv" id="chronic-v" style="font-size:20px">—</div>
+        <div class="abar"><div class="afill" id="chronic-bar" style="background:var(--g);width:0"></div></div>
+        <div class="ts">Promedio semanal 4 semanas</div>
       </div>
-    </div>
-    <div style="margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--border)">
-      <div class="meta-label">Ratio ACWR</div>
-      <div class="acwr-ratio-big" id="acwr-ratio">—</div>
-      <div class="acwr-zone" id="acwr-zone"></div>
-      <p style="font-size:11px;color:var(--muted);margin-top:8px">Zona segura: 0.8 — 1.3 | Riesgo lesión: >1.5 | Desacondicionamiento: <0.8</p>
+      <div>
+        <div class="mlb">Ratio ACWR</div>
+        <div class="aratio" id="acwr-ratio">—</div>
+        <div class="azone" id="acwr-zone"></div>
+        <div class="ainfo">Óptimo 0.8–1.3 · Precaución 1.3–1.5 · Riesgo &gt;1.5</div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- PAGE: HISTORICO -->
+<!-- ═══════ HISTORICO ═══════ -->
 <div class="page" id="page-historico">
-  <div class="week-header">
+  <div class="cbar">
     <h1>Histórico de semanas</h1>
-    <button class="btn btn-secondary" onclick="clearHistory()">
-      <i class="ti ti-trash"></i> Limpiar
-    </button>
+    <button class="btn d sm" onclick="clearHistory()"><i class="ti ti-trash"></i> Limpiar</button>
   </div>
-  <div id="historico-content"></div>
+  <div id="hist-content"></div>
 </div>
 
-<!-- PAGE: TEORIA -->
+<!-- ═══════ TEORIA ═══════ -->
 <div class="page" id="page-teoria">
-  <div class="section-title">Sistema de colores — Semáforo de carga</div>
-  <div class="teoria-grid" id="teoria-semaforo"></div>
-
-  <div class="section-title" style="margin-top:2rem">Guía por Match Day (MD)</div>
-  <div id="md-guides"></div>
-
-  <div class="section-title" style="margin-top:2rem">Tipos de tarea y carga estimada</div>
-  <div class="teoria-grid" id="teoria-tareas"></div>
+  <div class="stitle">Semáforo de carga</div>
+  <div class="tgrid" id="t-semaforo"></div>
+  <div class="stitle">Fundamentos — Carga aguda, crónica e índice ACWR</div>
+  <div id="t-acwr"></div>
+  <div class="stitle">Guía por Match Day</div>
+  <div id="t-mdguides"></div>
+  <div class="stitle">Tipos de tarea</div>
+  <div class="tgrid" id="t-tareas"></div>
 </div>
 
-<!-- MODAL TAREA -->
-<div class="modal-overlay" id="task-modal">
-  <div class="modal">
-    <h2>Nueva tarea</h2>
-    <div class="form-row">
-      <label>Nombre de la tarea</label>
-      <input type="text" id="t-name" placeholder="Ej: Rondo 4v2 presión temporal">
-    </div>
-    <div class="form-row">
+<!-- ═══════ MODAL TAREA ═══════ -->
+<div class="ov" id="task-ov">
+<div class="modal">
+  <div class="mtitle"><i class="ti ti-clipboard-list"></i><span id="modal-ttl">Nueva tarea</span></div>
+  <div class="fr2">
+    <div class="fr">
       <label>Tipo de tarea</label>
-      <select id="t-type">
-        <option value="drill">Tecnificación (Drill)</option>
-        <option value="reducido-1v1">Reducido 1v1</option>
-        <option value="reducido-2v2">Reducido 2v2</option>
-        <option value="reducido-3v3">Reducido 3v3</option>
-        <option value="reducido-4v4">Reducido 4v4</option>
-        <option value="reducido-5v5">Reducido 5v5</option>
-        <option value="transicion-corta">Transición corta</option>
-        <option value="transicion-larga">Transición larga</option>
-        <option value="juego-real">Juego real</option>
-        <option value="juego-condicionado">Juego real condicionado</option>
-        <option value="abp">ABP (balón parado)</option>
-        <option value="5v4">Situación especial 5v4 / 4v5</option>
-        <option value="4v3">Situación especial 4v3 / 3v4</option>
+      <select id="t-type" onchange="autoColor()">
+        <option value="drill">Drill analítico</option>
+        <option value="vel10">Velocidad 10m</option>
+        <option value="vel20">Velocidad 20m</option>
+        <option value="vel30">Velocidad 30m</option>
+        <option value="rsa">RSA (sprints repetidos)</option>
+        <option value="int-tac">Intermitente táctico</option>
+        <option value="int-c">Intermitente corto 15/15</option>
+        <option value="int-l">Intermitente largo 30/30</option>
+        <option value="tempo">Tempo continuo</option>
+        <option value="1v1">Reducido 1v1</option>
+        <option value="2v2">Reducido 2v2</option>
+        <option value="3v3">Reducido 3v3</option>
+        <option value="4v4">Reducido 4v4</option>
+        <option value="5v5">Reducido 5v5</option>
+        <option value="trans-c">Transición corta</option>
+        <option value="trans-l">Transición larga / Oleadas</option>
+        <option value="juego">Juego real</option>
+        <option value="cond">Juego condicionado</option>
+        <option value="abp">ABP — Balón parado</option>
+        <option value="5v4">Situación especial 5v4/4v5</option>
+        <option value="4v3">Situación especial 4v3/3v4</option>
       </select>
     </div>
-    <div class="form-row">
+    <div class="fr">
       <label>Dimensiones</label>
-      <select id="t-dim">
+      <select id="t-dim" onchange="autoColor()">
         <option value="10x10">10×10</option>
         <option value="10x20">10×20</option>
         <option value="20x20">20×20</option>
@@ -319,530 +364,746 @@ nav{background:var(--dark);padding:0 2rem;display:flex;align-items:center;gap:0;
         <option value="40x20">40×20</option>
       </select>
     </div>
-    <div class="form-row">
-      <label>Color semáforo</label>
-      <div class="color-picker">
-        <div class="color-opt rojo selected" data-color="rojo" onclick="selectColor(this)">🔴 Rojo</div>
-        <div class="color-opt naranja" data-color="naranja" onclick="selectColor(this)">🟠 Naranja</div>
-        <div class="color-opt amarillo" data-color="amarillo" onclick="selectColor(this)">🟡 Amarillo</div>
-        <div class="color-opt verde" data-color="verde" onclick="selectColor(this)">🟢 Verde</div>
-      </div>
-    </div>
-    <div class="form-row">
-      <label>Duración (min)</label>
-      <input type="number" id="t-duration" value="10" min="1" max="60">
-    </div>
-    <div class="form-row">
-      <label>Series × Tiempo trabajo (ej: 4x3min)</label>
-      <input type="text" id="t-series" placeholder="4x3">
-    </div>
-    <div class="form-row">
-      <label>Relación trabajo/pausa</label>
-      <select id="t-ratio">
-        <option value="1:3">1:3 (🟢 Verde)</option>
-        <option value="1:2">1:2 (🟡 Amarillo)</option>
-        <option value="1:1">1:1 (🟠 Naranja)</option>
-        <option value="2:1">2:1 (🔴 Rojo)</option>
+  </div>
+  <div class="fr">
+    <label>Nombre de la tarea</label>
+    <input type="text" id="t-name" placeholder="Ej: Rondo 4v2 con transición inmediata">
+  </div>
+  <div class="fr2">
+    <div class="fr">
+      <label>Jugadores totales</label>
+      <select id="t-players" onchange="autoColor()">
+        <option value="1">1</option><option value="2">2</option>
+        <option value="4">4</option><option value="6">6</option>
+        <option value="8">8 (4v4)</option><option value="9">9 (5v4)</option>
+        <option value="10">10 (5v5)</option>
       </select>
     </div>
-    <div class="form-row">
-      <label>RPE esperado (1-10)</label>
-      <input type="range" id="t-rpe" min="1" max="10" value="7" oninput="document.getElementById('t-rpe-val').textContent=this.value">
-      <div style="text-align:center;font-size:18px;font-weight:700;font-family:var(--font-mono);margin-top:4px" id="t-rpe-val">7</div>
-    </div>
-    <div class="form-row">
-      <label>Objetivo táctico</label>
-      <textarea id="t-objective" placeholder="Ej: Pressing en 1ª línea, recuperación rápida..."></textarea>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-primary" onclick="saveTask()">Guardar</button>
-      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+    <div class="fr">
+      <label>Relación trab./pausa</label>
+      <select id="t-ratio" onchange="autoColor()">
+        <option value="1:3">1:3 — muy baja densidad</option>
+        <option value="1:2">1:2 — baja densidad</option>
+        <option value="1:1">1:1 — media densidad</option>
+        <option value="2:1">2:1 — alta densidad</option>
+      </select>
     </div>
   </div>
+  <div class="fr2">
+    <div class="fr">
+      <label>Duración tarea (min)</label>
+      <input type="number" id="t-dur" value="10" min="1" max="90" onchange="autoColor()">
+    </div>
+    <div class="fr">
+      <label>Series × trabajo (ej: 6x3)</label>
+      <input type="text" id="t-series" placeholder="6x3min">
+    </div>
+  </div>
+  <div class="fr">
+    <label>Carga física asociada</label>
+    <select id="t-phys">
+      <option value="">— Sin componente específico</option>
+      <option value="vel10">Velocidad corta 10m</option>
+      <option value="vel20">Velocidad media 20m</option>
+      <option value="vel30">Velocidad larga 30m+</option>
+      <option value="rsa">RSA — Sprints repetidos</option>
+      <option value="int-tac">Intermitente táctico</option>
+      <option value="int-c">Intermitente corto 15/15</option>
+      <option value="int-l">Intermitente largo 30/30</option>
+      <option value="tempo">Tempo continuo</option>
+      <option value="potencia">Potencia aeróbica</option>
+      <option value="fuerza">Fuerza neuromuscular</option>
+    </select>
+  </div>
+  <div class="fr">
+    <label>Color semáforo — <span id="color-auto-lbl" style="font-style:italic;font-size:10px">auto-detectado</span></label>
+    <div class="cpick">
+      <div class="copt or" data-c="rojo" onclick="pickColor(this)">🔴 Rojo<br><span style="font-size:9px;font-weight:400">RPE 8-10</span></div>
+      <div class="copt oo" data-c="naranja" onclick="pickColor(this)">🟠 Naranja<br><span style="font-size:9px;font-weight:400">RPE 6-8</span></div>
+      <div class="copt oy" data-c="amarillo" onclick="pickColor(this)">🟡 Amarillo<br><span style="font-size:9px;font-weight:400">RPE 4-6</span></div>
+      <div class="copt og sel" data-c="verde" onclick="pickColor(this)">🟢 Verde<br><span style="font-size:9px;font-weight:400">RPE 2-4</span></div>
+    </div>
+    <div class="hint" id="auto-hint"></div>
+  </div>
+  <div class="fr">
+    <label>RPE teórico esperado: <span id="t-rpe-v" style="font-family:var(--FM);font-weight:800;font-size:16px">7</span>/10</label>
+    <input type="range" id="t-rpe" min="1" max="10" step="1" value="7" oninput="document.getElementById('t-rpe-v').textContent=this.value">
+  </div>
+  <div class="fr">
+    <label>Objetivo táctico</label>
+    <textarea id="t-obj" placeholder="Ej: Pressing en 1ª línea, recuperación tras pérdida..."></textarea>
+  </div>
+  <div class="mactions">
+    <button class="btn p" onclick="saveTask()"><i class="ti ti-check"></i> Guardar</button>
+    <button class="btn" onclick="closeTaskModal()">Cancelar</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════ MODAL DIA ═══════ -->
+<div class="ov" id="day-ov">
+<div class="modal">
+  <div class="mtitle"><i class="ti ti-calendar"></i> Configurar día</div>
+  <div class="fr">
+    <label>Nombre del día</label>
+    <input type="text" id="dm-name" placeholder="Ej: Pico de carga semanal">
+  </div>
+  <div class="fr">
+    <label>Objetivos (separados por coma)</label>
+    <input type="text" id="dm-obj" placeholder="Alta fatiga, Transiciones, Pressing">
+  </div>
+  <div class="fr">
+    <label>Color / intensidad</label>
+    <div class="cpick">
+      <div class="copt or" data-c="rojo" onclick="pickDayColor(this)">🔴 Rojo</div>
+      <div class="copt oo" data-c="naranja" onclick="pickDayColor(this)">🟠 Naranja</div>
+      <div class="copt oy" data-c="amarillo" onclick="pickDayColor(this)">🟡 Amarillo</div>
+      <div class="copt og" data-c="verde" onclick="pickDayColor(this)">🟢 Verde</div>
+    </div>
+  </div>
+  <div class="fr" style="display:flex;align-items:center;gap:10px">
+    <input type="checkbox" id="dm-match" style="width:auto;cursor:pointer">
+    <label style="font-size:12px;text-transform:none;letter-spacing:0;color:var(--tx);cursor:pointer" for="dm-match">Este día es PARTIDO (Match Day)</label>
+  </div>
+  <div class="mactions">
+    <button class="btn p" onclick="saveDayModal()"><i class="ti ti-check"></i> Guardar</button>
+    <button class="btn" onclick="closeDayModal()">Cancelar</button>
+  </div>
+</div>
 </div>
 
 <script>
-const COLORS={
-  rojo:{name:'Rojo',emoji:'🔴',rpe:'8-10',dot:'dot-rojo',chip:'color-rojo',rpe_class:'rpe-rojo'},
-  naranja:{name:'Naranja',emoji:'🟠',rpe:'6-8',dot:'dot-naranja',chip:'color-naranja',rpe_class:'rpe-naranja'},
-  amarillo:{name:'Amarillo',emoji:'🟡',rpe:'4-6',dot:'dot-amarillo',chip:'color-amarillo',rpe_class:'rpe-amarillo'},
-  verde:{name:'Verde',emoji:'🟢',rpe:'2-4',dot:'dot-verde',chip:'color-verde',rpe_class:'rpe-verde'}
+/* ═══════ CONSTANTS ═══════ */
+const C={
+  rojo:  {n:'Rojo',  e:'🔴',rpe:'8–10',rpeN:9, bg:'var(--rbg)',bd:'var(--rbrd)',tx:'var(--r)',dot:'dotr',sp:'cr'},
+  naranja:{n:'Naranja',e:'🟠',rpe:'6–8', rpeN:7, bg:'var(--obg)',bd:'var(--obrd)',tx:'var(--o)',dot:'doto',sp:'co'},
+  amarillo:{n:'Amarillo',e:'🟡',rpe:'4–6',rpeN:5,bg:'var(--ybg)',bd:'var(--ybrd)',tx:'var(--y)',dot:'doty',sp:'cy'},
+  verde: {n:'Verde', e:'🟢',rpe:'2–4', rpeN:3, bg:'var(--gbg)',bd:'var(--gbrd)',tx:'var(--g)',dot:'dotg',sp:'cg'}
 };
+const PHYS_L={vel10:'Vel.10m',vel20:'Vel.20m',vel30:'Vel.30m',rsa:'RSA','int-tac':'Int.Táctico','int-c':'Int.15/15','int-l':'Int.30/30',tempo:'Tempo',potencia:'P.Aeróbica',fuerza:'F.Neuro'};
 
-const TASK_TYPES={
-  'drill':['analítico','tecnificación'],
-  'reducido-1v1':['reducido','alta intensidad'],
-  'reducido-2v2':['reducido','bilateral'],
-  'reducido-3v3':['reducido','juego corto'],
-  'reducido-4v4':['reducido','juego intenso'],
-  'reducido-5v5':['reducido','juego posicional'],
-  'transicion-corta':['transición','sprint corto'],
-  'transicion-larga':['transición','oleadas'],
-  'juego-real':['juego real','competitivo'],
-  'juego-condicionado':['juego condicionado','táctico'],
-  'abp':['balón parado','automatización'],
-  '5v4':['situación especial','superioridad'],
-  '4v3':['situación especial','superioridad ofensiva']
-};
-
-const MD_CONFIGS={
-  saturday:{md:6,days:['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],rest:[0,6]},
-  sunday:{md:0,days:['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],rest:[0,6]},
-  friday:{md:5,days:['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],rest:[5,6]}
-};
-
-function getMDOffset(mdVal){
-  if(mdVal==='saturday') return 5;
-  if(mdVal==='sunday') return 6;
-  if(mdVal==='friday') return 4;
-  return 5;
+/* AUTO-COLOR SCORING */
+const TS={drill:0,vel10:1,vel20:2,vel30:3,tempo:2,'int-c':5,'int-l':6,'int-tac':6,rsa:9,'1v1':7,'2v2':7,'3v3':7,'4v4':8,'5v5':5,'trans-c':6,'trans-l':9,juego:7,cond:6,abp:1,'5v4':5,'4v3':6};
+const DS={'10x10':1,'10x20':2,'20x20':3,'28x20':4,'30x20':5,'40x20':7};
+const RS={'1:3':0,'1:2':2,'1:1':5,'2:1':9};
+function calcColor(){
+  let s=(TS[document.getElementById('t-type').value]||3)+(DS[document.getElementById('t-dim').value]||3)+(RS[document.getElementById('t-ratio').value]||3);
+  const dur=parseInt(document.getElementById('t-dur').value)||10;
+  const pl=parseInt(document.getElementById('t-players').value)||4;
+  if(dur>25)s+=2;if(dur>45)s+=2;if(pl<=2)s+=2;
+  if(s<=6)return'verde';if(s<=11)return'amarillo';if(s<=16)return'naranja';return'rojo';
+}
+function autoColor(){
+  const c=calcColor();applyColor(c);
+  const h=document.getElementById('auto-hint');
+  h.style.display='block';
+  h.style.background=C[c].bg;h.style.color=C[c].tx;h.style.border='1px solid '+C[c].bd;
+  h.textContent='Auto: '+C[c].e+' '+C[c].n+' — podés cambiarlo si lo considerás diferente';
+  const rpeMap={rojo:9,naranja:7,amarillo:5,verde:3};
+  document.getElementById('t-rpe').value=rpeMap[c];
+  document.getElementById('t-rpe-v').textContent=rpeMap[c];
 }
 
-const DEFAULT_WEEK_TEMPLATES={
-  saturday:[
-    {label:'Lun',md_offset:-5,color:'verde',name:'Recuperación / Priming',volume:45,objectives:['Activación neural','Técnica fina','Priming post-partido'],defaultTasks:[
-      {name:'Técnica individual',color:'verde',duration:15,rpe:3,type:'drill',dim:'20x20',series:'',ratio:'1:3',obj:'Automatización técnica'},
-      {name:'ABP repaso',color:'verde',duration:20,rpe:3,type:'abp',dim:'28x20',series:'',ratio:'1:3',obj:'Balón parado ofensivo y defensivo'}
-    ]},
-    {label:'Mar',md_offset:-4,color:'rojo',name:'Carga máxima',volume:90,objectives:['Alta fatiga acumulada','Transiciones','Juego reducido intenso'],defaultTasks:[
-      {name:'Transiciones continuas',color:'rojo',duration:20,rpe:9,type:'transicion-larga',dim:'40x20',series:'6x3',ratio:'2:1',obj:'Velocidad de transición ataque-defensa'},
-      {name:'4v4 presión alta',color:'rojo',duration:20,rpe:9,type:'reducido-4v4',dim:'20x20',series:'4x4',ratio:'1:1',obj:'Pressing colectivo'},
-      {name:'RSA específico',color:'rojo',duration:15,rpe:9,type:'drill',dim:'40x20',series:'8x15s',ratio:'1:2',obj:'Resistencia a sprints repetidos'}
-    ]},
-    {label:'Mié',md_offset:-3,color:'naranja',name:'Alta intensidad táctica',volume:75,objectives:['Velocidad táctica','Posesión dinámica','Presión organizada'],defaultTasks:[
-      {name:'Posesión condicionada',color:'naranja',duration:20,rpe:7,type:'juego-condicionado',dim:'30x20',series:'5x4',ratio:'1:1',obj:'Posesión con presión organizada'},
-      {name:'3v3 competitivo',color:'naranja',duration:20,rpe:7,type:'reducido-3v3',dim:'20x20',series:'4x4',ratio:'1:1',obj:'Juego corto con transición'}
-    ]},
-    {label:'Jue',md_offset:-2,color:'amarillo',name:'Ajuste táctico',volume:60,objectives:['Automatizaciones','Balón parado','Velocidad sin desgaste'],defaultTasks:[
-      {name:'Automatización defensiva',color:'amarillo',duration:20,rpe:5,type:'juego-condicionado',dim:'28x20',series:'',ratio:'1:2',obj:'Sistema defensivo'},
-      {name:'ABP ofensivo',color:'amarillo',duration:15,rpe:4,type:'abp',dim:'28x20',series:'',ratio:'1:3',obj:'Jugadas a balón parado'}
-    ]},
-    {label:'Vie',md_offset:-1,color:'verde',name:'Priming neural',volume:35,objectives:['Activación explosiva','Finalización','Confianza competitiva'],defaultTasks:[
-      {name:'Activación explosiva',color:'verde',duration:10,rpe:3,type:'drill',dim:'20x20',series:'',ratio:'1:3',obj:'Estímulo neuromuscular'},
-      {name:'5v4 confianza',color:'verde',duration:10,rpe:4,type:'5v4',dim:'40x20',series:'',ratio:'1:3',obj:'Situaciones favorables pre-partido'}
-    ]},
-    {label:'Sáb',md_offset:0,color:'rojo',name:'MATCH DAY',volume:0,objectives:['Competencia'],defaultTasks:[]},
-    {label:'Dom',md_offset:1,color:'verde',name:'Descanso',volume:0,objectives:['Recuperación activa o libre'],defaultTasks:[]}
+let selColor='verde', selDayColor='verde';
+function applyColor(c){
+  document.querySelectorAll('#task-ov .copt').forEach(e=>{e.classList.remove('sel');if(e.dataset.c===c)e.classList.add('sel');});
+  selColor=c;
+}
+function pickColor(el){
+  document.querySelectorAll('#task-ov .copt').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');selColor=el.dataset.c;
+  document.getElementById('color-auto-lbl').textContent='seleccionado manualmente';
+}
+function pickDayColor(el){
+  document.querySelectorAll('#day-ov .copt').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');selDayColor=el.dataset.c;
+}
+
+/* ═══════ STATE ═══════ */
+let W=[];  // currentWeek days
+let editDayIdx=null, editTaskIdx=null, editTaskDay=null;
+let curMonth=new Date().getMonth(), curYear=new Date().getFullYear();
+let wHistory=JSON.parse(localStorage.getItem('fl_weeks')||'[]');
+
+/* ═══════ TEMPLATES ═══════ */
+const T={
+  sabado:[
+    {l:'Lun',c:'verde',n:'Recuperación activa',vol:45,isMatch:false,obj:['Técnica fina','ABP','Activación leve'],tasks:[
+      mk('Técnica individual','verde',15,3,'drill','20x20','','1:3','','Automatización técnica'),
+      mk('ABP repaso sistemas','verde',20,3,'abp','28x20','','1:3','','Balón parado ofensivo y defensivo')]},
+    {l:'Mar',c:'rojo',n:'Pico de carga semanal',vol:90,isMatch:false,obj:['Alta fatiga','Transiciones','Reducidos intensos'],tasks:[
+      mk('Activación progresiva','verde',10,3,'drill','20x20','','1:3','','Entrada en calor'),
+      mk('Transiciones oleadas','rojo',20,9,'trans-l','40x20','6x3min','2:1','int-tac','Transición ataque-defensa'),
+      mk('4v4 presión máxima','rojo',20,9,'4v4','20x20','4x4min','1:1','potencia','Pressing colectivo y transición'),
+      mk('RSA específico','rojo',15,9,'rsa','40x20','8x15s','1:2','rsa','Resistencia a sprints repetidos')]},
+    {l:'Mié',c:'naranja',n:'Alta intensidad táctica',vol:75,isMatch:false,obj:['Posesión dinámica','Pressing','Velocidad táctica'],tasks:[
+      mk('Rondo transición','naranja',15,7,'4v4','20x20','5x3min','1:1','int-tac','Circulación rápida con presión'),
+      mk('Posesión 5v5 condicionada','naranja',20,7,'cond','30x20','4x5min','1:1','potencia','Posesión zonas y transición'),
+      mk('3v3 bilateral','naranja',15,7,'3v3','20x20','4x4min','1:1','int-c','Juego corto bilateral')]},
+    {l:'Jue',c:'amarillo',n:'Ajuste táctico',vol:60,isMatch:false,obj:['Automatizaciones','ABP','Control de carga'],tasks:[
+      mk('Automatización defensiva','amarillo',20,5,'cond','28x20','','1:2','tempo','Sistema defensivo'),
+      mk('ABP ofensivo detallado','amarillo',15,4,'abp','28x20','','1:3','','Jugadas a balón parado'),
+      mk('5v4 táctico','amarillo',15,5,'5v4','40x20','','1:2','','Superioridad ofensiva')]},
+    {l:'Vie',c:'verde',n:'Priming precompetitivo',vol:35,isMatch:false,obj:['Activación neural','Finalización','Confianza'],tasks:[
+      mk('Velocidad 10-20m','verde',10,3,'vel20','20x20','6x20m','1:3','vel20','Estímulo neuromuscular'),
+      mk('5v4 confianza','verde',10,4,'5v4','40x20','','1:3','','Situaciones favorables'),
+      mk('Finalización libre','verde',8,3,'drill','28x20','','1:3','','Sensaciones pre-partido')]},
+    {l:'Sáb',c:'rojo',n:'MATCH DAY',vol:0,isMatch:true,obj:['Competencia'],tasks:[]},
+    {l:'Dom',c:'verde',n:'Descanso',vol:0,isMatch:false,obj:['Recuperación pasiva'],tasks:[]}
+  ],
+  domingo:[
+    {l:'Lun',c:'rojo',n:'Pico de carga semanal',vol:90,isMatch:false,obj:['Alta fatiga','Transiciones'],tasks:[
+      mk('Transiciones oleadas','rojo',20,9,'trans-l','40x20','6x3min','2:1','int-tac','Transición A-D'),
+      mk('4v4 presión','rojo',20,9,'4v4','20x20','4x4min','1:1','potencia','Pressing'),
+      mk('RSA','rojo',15,9,'rsa','40x20','8x15s','1:2','rsa','RSA específico')]},
+    {l:'Mar',c:'verde',n:'Recuperación activa',vol:40,isMatch:false,obj:['Técnica fina','ABP'],tasks:[
+      mk('Técnica individual','verde',15,3,'drill','20x20','','1:3','','Automatización'),
+      mk('ABP repaso','verde',15,3,'abp','28x20','','1:3','','Balón parado')]},
+    {l:'Mié',c:'naranja',n:'Alta intensidad táctica',vol:70,isMatch:false,obj:['Posesión','Pressing'],tasks:[
+      mk('Posesión condicionada','naranja',20,7,'cond','30x20','4x5min','1:1','potencia','Posesión con presión'),
+      mk('3v3 bilateral','naranja',20,7,'3v3','20x20','4x4min','1:1','int-c','Juego corto')]},
+    {l:'Jue',c:'amarillo',n:'Ajuste táctico',vol:55,isMatch:false,obj:['ABP','Automatizaciones'],tasks:[
+      mk('Automatización defensiva','amarillo',20,5,'cond','28x20','','1:2','tempo','Sistema defensivo'),
+      mk('ABP ofensivo','amarillo',15,4,'abp','28x20','','1:3','','Balón parado')]},
+    {l:'Vie',c:'amarillo',n:'Ajuste + activación',vol:45,isMatch:false,obj:['Activación','Situaciones'],tasks:[
+      mk('Velocidad','verde',12,3,'vel20','20x20','6x20m','1:3','vel20','Estímulo neuromuscular'),
+      mk('5v4 dinámico','amarillo',15,5,'5v4','40x20','','1:2','','Superioridad numérica')]},
+    {l:'Sáb',c:'verde',n:'Priming',vol:30,isMatch:false,obj:['Priming','Activación neural'],tasks:[
+      mk('Activación explosiva','verde',12,3,'vel10','10x20','','1:3','vel10','Pre-partido'),
+      mk('Finalización','verde',10,3,'drill','28x20','','1:3','','Confianza')]},
+    {l:'Dom',c:'rojo',n:'MATCH DAY',vol:0,isMatch:true,obj:['Competencia'],tasks:[]}
+  ],
+  viernes:[
+    {l:'Lun',c:'verde',n:'Recuperación activa',vol:40,isMatch:false,obj:['Técnica fina','ABP'],tasks:[
+      mk('Técnica individual','verde',15,3,'drill','20x20','','1:3','','Automatización'),
+      mk('ABP repaso','verde',15,3,'abp','28x20','','1:3','','Balón parado')]},
+    {l:'Mar',c:'rojo',n:'Pico de carga semanal',vol:90,isMatch:false,obj:['Alta fatiga','Transiciones'],tasks:[
+      mk('Transiciones oleadas','rojo',20,9,'trans-l','40x20','6x3min','2:1','int-tac','Transición A-D'),
+      mk('4v4 presión','rojo',20,9,'4v4','20x20','4x4min','1:1','potencia','Pressing'),
+      mk('RSA','rojo',15,9,'rsa','40x20','8x15s','1:2','rsa','RSA')]},
+    {l:'Mié',c:'naranja',n:'Alta intensidad táctica',vol:70,isMatch:false,obj:['Posesión','Pressing'],tasks:[
+      mk('Posesión condicionada','naranja',20,7,'cond','30x20','4x5min','1:1','potencia','Posesión con presión'),
+      mk('3v3 bilateral','naranja',15,7,'3v3','20x20','4x4min','1:1','int-c','Juego corto')]},
+    {l:'Jue',c:'amarillo',n:'Ajuste táctico',vol:50,isMatch:false,obj:['ABP','Activación'],tasks:[
+      mk('ABP ofensivo y defensivo','amarillo',20,4,'abp','28x20','','1:3','','Sistemas a balón parado'),
+      mk('Velocidad + activación','verde',12,3,'vel10','10x20','6x10m','1:3','vel10','Estímulo neuromuscular')]},
+    {l:'Vie',c:'rojo',n:'MATCH DAY',vol:0,isMatch:true,obj:['Competencia'],tasks:[]},
+    {l:'Sáb',c:'verde',n:'Recuperación',vol:30,isMatch:false,obj:['Recuperación activa'],tasks:[
+      mk('Técnica leve','verde',15,2,'drill','20x20','','1:3','','Activación suave')]},
+    {l:'Dom',c:'verde',n:'Descanso',vol:0,isMatch:false,obj:['Libre'],tasks:[]}
+  ],
+  doble:[
+    {l:'Lun',c:'verde',n:'Recuperación post-MD',vol:35,isMatch:false,obj:['ABP','Técnica fina'],tasks:[
+      mk('Técnica individual','verde',15,3,'drill','20x20','','1:3','','Automatización'),
+      mk('ABP repaso','verde',15,3,'abp','28x20','','1:3','','Balón parado')]},
+    {l:'Mar',c:'naranja',n:'Carga media (semana corta)',vol:65,isMatch:false,obj:['Táctica','Posesión'],tasks:[
+      mk('Posesión condicionada','naranja',20,7,'cond','30x20','4x5min','1:1','potencia','Posesión con presión'),
+      mk('Transiciones 3v2','naranja',15,7,'trans-c','40x20','6x2min','1:1','int-tac','Transición rápida')]},
+    {l:'Mié',c:'rojo',n:'MATCH DAY 1',vol:0,isMatch:true,obj:['Competencia'],tasks:[]},
+    {l:'Jue',c:'verde',n:'Recuperación activa',vol:35,isMatch:false,obj:['Recuperación','Movilidad'],tasks:[
+      mk('Activación leve + técnica','verde',20,3,'drill','20x20','','1:3','','Recuperación activa')]},
+    {l:'Vie',c:'amarillo',n:'Ajuste precompetitivo',vol:45,isMatch:false,obj:['ABP','Priming'],tasks:[
+      mk('ABP + situaciones','amarillo',15,4,'abp','28x20','','1:3','','Pre-partido'),
+      mk('Velocidad + finalización','verde',15,3,'vel20','20x20','6x20m','1:3','vel20','Priming')]},
+    {l:'Sáb',c:'rojo',n:'MATCH DAY 2',vol:0,isMatch:true,obj:['Competencia'],tasks:[]},
+    {l:'Dom',c:'verde',n:'Descanso',vol:0,isMatch:false,obj:['Libre'],tasks:[]}
   ]
 };
 
-let currentWeek=[];
-let selectedDay=null;
-let selectedColor='rojo';
-let currentMonth=new Date().getMonth();
-let currentYear=new Date().getFullYear();
-let history=JSON.parse(localStorage.getItem('futsal_history')||'[]');
-let weeklyHistory=JSON.parse(localStorage.getItem('futsal_weeks')||'[]');
-
-function initWeek(){
-  const mdSel=document.getElementById('match-day-select').value;
-  currentWeek=JSON.parse(JSON.stringify(DEFAULT_WEEK_TEMPLATES.saturday));
-  const mdOff=getMDOffset(mdSel);
-  const dayNames={saturday:['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],sunday:['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],friday:['Lun','Mar','Mié','Jue','Vie','Sáb','Dom']};
-  const dayColors={saturday:['verde','rojo','naranja','amarillo','verde','rojo','verde'],sunday:['rojo','verde','rojo','naranja','amarillo','verde','rojo'],friday:['verde','rojo','naranja','amarillo','rojo','verde','verde']};
-  currentWeek.forEach((d,i)=>{
-    d.label=dayNames[mdSel][i];
-    d.color=dayColors[mdSel][i];
-    if(d.label==='Sáb'||d.label==='Dom'){if(mdSel==='saturday'&&d.label==='Sáb'){d.color='rojo';d.name='MATCH DAY';}else if(mdSel==='sunday'&&d.label==='Dom'){d.color='rojo';d.name='MATCH DAY';}}
-  });
+function mk(name,color,duration,rpe,type,dim,series,ratio,phys,obj){
+  return{name,color,duration,rpe,rpeReal:null,type,dim,series,ratio,phys,obj};
 }
 
-function rebuildWeek(){initWeek();renderWeek()}
+/* ═══════ APPLY TEMPLATE ═══════ */
+function applyTemplate(){
+  const k=document.getElementById('tmpl-sel').value;
+  W=JSON.parse(JSON.stringify(T[k]));
+  renderAll();
+}
 
-function renderWeek(){
-  const grid=document.getElementById('days-grid');
-  grid.innerHTML='';
-  let totalVol=0,totalTasks=0,totalRpe=0,rpeCount=0;
-  currentWeek.forEach((day,di)=>{
-    const isMatchDay=day.name.includes('MATCH DAY');
-    const isRest=day.name==='Descanso';
-    const col=COLORS[day.color]||COLORS.verde;
-    totalVol+=day.volume;
-    totalTasks+=day.defaultTasks.length;
-    day.defaultTasks.forEach(t=>{totalRpe+=t.rpe;rpeCount++;});
+/* ═══════ RENDER ALL ═══════ */
+function renderAll(){renderStrip();renderTotals();renderRpeRel();renderDays();}
 
-    const tasksHTML=day.defaultTasks.map((t,ti)=>{
-      const tc=COLORS[t.color]||COLORS.verde;
-      return `<div class="task-chip ${tc.chip}">
-        <div class="task-chip-dot ${tc.dot}"></div>
-        <span class="task-chip-name">${t.name}</span>
-        <span class="task-chip-time">${t.duration}min</span>
-        <span class="task-chip-rpe ${tc.rpe_class}">RPE ${t.rpe}</span>
-        <span style="cursor:pointer;opacity:.5" onclick="editTask(${di},${ti})"><i class="ti ti-pencil" style="font-size:12px"></i></span>
-        <span style="cursor:pointer;opacity:.5" onclick="removeTask(${di},${ti})"><i class="ti ti-x" style="font-size:12px"></i></span>
-      </div>`;
-    }).join('');
+/* ═══════ STRIP ═══════ */
+function renderStrip(){
+  document.getElementById('week-strip').innerHTML=W.map((d,i)=>{
+    const col=C[d.c]||C.verde;
+    return`<div class="sday${d.isMatch?' md':''}" style="border-color:${col.tx};background:${col.bg}" onclick="openDayModal(${i})">
+      ${d.isMatch?`<div style="font-size:8px;font-weight:800;padding:1px 5px;border-radius:3px;background:var(--rbg);color:var(--r);font-family:var(--FM);margin-bottom:2px">MD</div>`:''}
+      <div class="sday-name" style="color:${col.tx}">${d.l}</div>
+      <div class="sday-circle" style="background:${col.tx}">${col.e}</div>
+      <div class="sday-vol" style="color:${col.tx}">${d.vol?d.vol+'min':d.isMatch?'MD':'—'}</div>
+      <div class="sday-obj">${(d.obj||[]).slice(0,2).join(' · ')}</div>
+    </div>`;
+  }).join('');
+}
 
-    const divCard=document.createElement('div');
-    divCard.className='day-card';
-    divCard.innerHTML=`
-      <div class="day-header">
-        <div class="day-dot ${col.dot}"></div>
-        <div class="day-name" style="color:var(--${day.color})">${day.label}</div>
-        ${isMatchDay?`<span class="day-md-badge color-${day.color}">MATCH DAY</span>`:''}
-        ${isRest?`<span class="day-md-badge color-verde">LIBRE</span>`:''}
-        <div class="day-label">${col.emoji} ${col.name} · ${day.name}</div>
-        <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px" onclick="changeDayColor(${di})">Cambiar color</button>
-      </div>
-      <div class="day-body">
-        <div class="day-meta">
-          <div class="meta-item"><div class="meta-label">Volumen</div><div class="meta-value" style="color:var(--${day.color})">${day.volume}<span style="font-size:12px;font-weight:400"> min</span></div></div>
-          <div class="meta-item"><div class="meta-label">RPE esperado</div><div class="meta-value">${col.rpe}</div></div>
-          <div class="meta-item"><div class="meta-label">Tareas</div><div class="meta-value">${day.defaultTasks.length}</div></div>
-          <div class="meta-item" style="flex:1">
-            <div class="meta-label">Objetivos</div>
-            <div style="font-size:11px;color:var(--muted)">${day.objectives.join(' · ')}</div>
-          </div>
-        </div>
-        <div class="tasks-list">${tasksHTML}
-          ${!isRest?`<button class="add-task-btn" onclick="openModal(${di})"><i class="ti ti-plus" style="font-size:13px"></i> Agregar tarea</button>`:''}
-        </div>
-      </div>`;
-    grid.appendChild(divCard);
+/* ═══════ TOTALS ═══════ */
+function calcUA(day){
+  // UA = volumen_dia × RPE_promedio_tareas / 10
+  if(!day.tasks.length) return 0;
+  const avgRpe=day.tasks.reduce((s,t)=>s+t.rpe,0)/day.tasks.length;
+  return Math.round((day.vol||0)*avgRpe/10);
+}
+
+function renderTotals(){
+  let totalVol=0,allRpe=[],totalUA=0;
+  W.forEach(d=>{
+    totalVol+=(d.vol||0);
+    d.tasks.forEach(t=>allRpe.push(t.rpe));
+    totalUA+=calcUA(d);
   });
-
-  const avgRpe=rpeCount>0?(totalRpe/rpeCount).toFixed(1):'—';
+  const avgRpe=allRpe.length?(allRpe.reduce((a,b)=>a+b)/allRpe.length).toFixed(1):'—';
+  const matches=W.filter(d=>d.isMatch).length;
   document.getElementById('week-totals').innerHTML=`
-    <div class="total-card"><div class="total-label">Volumen total</div><div class="total-value">${totalVol}</div><div class="total-sub">minutos de trabajo</div></div>
-    <div class="total-card"><div class="total-label">Tareas</div><div class="total-value">${totalTasks}</div><div class="total-sub">ejercicios planificados</div></div>
-    <div class="total-card"><div class="total-label">RPE prom.</div><div class="total-value">${avgRpe}</div><div class="total-sub">de todas las tareas</div></div>
-    <div class="total-card"><div class="total-label">Carga estimada</div><div class="total-value">${Math.round(totalVol*(parseFloat(avgRpe)||5)/10)}</div><div class="total-sub">unidades (min×RPE/10)</div></div>
+    <div class="tc"><div class="tlb">Volumen total</div><div class="tv">${totalVol}</div><div class="ts">minutos de trabajo</div></div>
+    <div class="tc"><div class="tlb">Partidos</div><div class="tv">${matches}</div><div class="ts">match days</div></div>
+    <div class="tc"><div class="tlb">RPE teórico prom.</div><div class="tv">${avgRpe}</div><div class="ts">todas las tareas</div></div>
+    <div class="tc"><div class="tlb">Carga semana (UA)</div><div class="tv">${totalUA}</div><div class="ts">vol × RPE_prom / 10</div></div>
+    <div class="tc"><div class="tlb">Tareas</div><div class="tv">${W.reduce((s,d)=>s+d.tasks.length,0)}</div><div class="ts">planificadas</div></div>
   `;
 }
 
-function changeDayColor(di){
-  const colors=['verde','amarillo','naranja','rojo'];
-  const cur=colors.indexOf(currentWeek[di].color);
-  currentWeek[di].color=colors[(cur+1)%colors.length];
-  renderWeek();
+/* ═══════ RPE RELATIVO ═══════ */
+function renderRpeRel(){
+  document.getElementById('rpe-rel').innerHTML=W.map((d,i)=>{
+    const col=C[d.c]||C.verde;
+    const teos=d.tasks.map(t=>t.rpe);
+    const reals=d.tasks.map(t=>t.rpeReal).filter(r=>r!==null&&r!==undefined&&r!=='');
+    const teoA=teos.length?(teos.reduce((a,b)=>a+b)/teos.length).toFixed(1):null;
+    const realA=reals.length?(reals.reduce((a,b)=>+a+ +b)/reals.length).toFixed(1):null;
+    const teoH=teoA?Math.round(parseFloat(teoA)/10*100):0;
+    const realH=realA?Math.round(parseFloat(realA)/10*100):0;
+    const diff=teoA&&realA?(parseFloat(realA)-parseFloat(teoA)).toFixed(1):null;
+    const dc=diff===null?'':Math.abs(parseFloat(diff))>1.5?(parseFloat(diff)>0?'var(--r)':'var(--g)'):'var(--mt)';
+    return`<div class="rrd">
+      <div class="rrd-name" style="color:${col.tx}">${d.l}</div>
+      <div class="rrd-bars">
+        ${teoA?`<div class="rrd-bar-teo" style="height:${teoH}%;background:${col.tx}"></div>`:''}
+        ${realA?`<div class="rrd-bar-real" style="height:${realH}%;background:${col.tx}"></div>`:''}
+      </div>
+      <div class="rrd-val" style="color:${col.tx}">${realA||'—'}</div>
+      <div class="rrd-teo">${teoA?'teo:'+teoA:''}</div>
+      ${diff!==null?`<div class="rrd-diff" style="color:${dc}">${parseFloat(diff)>0?'+':''}${diff}</div>`:''}
+    </div>`;
+  }).join('');
 }
 
-let editingDay=null,editingTaskIdx=null;
-function openModal(dayIdx){editingDay=dayIdx;editingTaskIdx=null;document.getElementById('t-name').value='';document.getElementById('t-rpe').value=7;document.getElementById('t-rpe-val').textContent='7';document.getElementById('t-objective').value='';document.querySelector('.modal h2').textContent='Nueva tarea';document.getElementById('task-modal').classList.add('open')}
-function closeModal(){document.getElementById('task-modal').classList.remove('open')}
-function selectColor(el){document.querySelectorAll('.color-opt').forEach(e=>e.classList.remove('selected'));el.classList.add('selected');selectedColor=el.dataset.color}
+/* ═══════ DAYS ═══════ */
+function renderDays(){
+  const grid=document.getElementById('days-grid');
+  grid.innerHTML='';
+  W.forEach((day,di)=>{
+    const col=C[day.c]||C.verde;
+    const ua=calcUA(day);
+    const avgRpe=day.tasks.length?(day.tasks.reduce((s,t)=>s+t.rpe,0)/day.tasks.length).toFixed(1):'—';
 
-function editTask(di,ti){
-  editingDay=di;editingTaskIdx=ti;
-  const t=currentWeek[di].defaultTasks[ti];
+    // tasks html
+    const tasksHTML=day.tasks.map((t,ti)=>{
+      const tc=C[t.color]||C.verde;
+      const rReal=(t.rpeReal!==null&&t.rpeReal!==''&&t.rpeReal!==undefined)?t.rpeReal:'';
+      const rDiffColor=rReal&&Math.abs(parseFloat(rReal)-t.rpe)>1.5?(parseFloat(rReal)>t.rpe?'var(--r)':'var(--g)'):'var(--tx)';
+      return`<div class="trow">
+        <div class="trow-dot ${tc.dot}"></div>
+        <div class="trow-body">
+          <div class="trow-name">${t.name}</div>
+          <div class="trow-meta">
+            <span><i class="ti ti-clock" style="font-size:10px"></i>${t.duration}min</span>
+            <span class="rpeb" style="background:${tc.bg};color:${tc.tx};border:1px solid ${tc.bd}">${tc.e} RPE teo: ${t.rpe}</span>
+            <span class="rpe-real-w">Real: <input class="rpe-ri" type="number" min="1" max="10" placeholder="—" value="${rReal}" style="color:${rReal?rDiffColor:'var(--mt)'}" onchange="setRpeReal(${di},${ti},this.value)" title="RPE real percibido por los jugadores"></span>
+            ${t.series?`<span>${t.series}</span>`:''}
+            <span title="trabajo/pausa">${t.ratio}</span>
+            <span title="cancha">${t.dim}</span>
+            ${t.phys?`<span class="physb">${PHYS_L[t.phys]||t.phys}</span>`:''}
+          </div>
+          ${t.obj?`<div style="font-size:10px;color:var(--mt);margin-top:2px;font-style:italic">${t.obj}</div>`:''}
+        </div>
+        <div class="trow-actions">
+          <button class="ibtn" onclick="openEditTask(${di},${ti})" title="Editar"><i class="ti ti-pencil"></i></button>
+          <button class="ibtn" onclick="removeTask(${di},${ti})" title="Eliminar"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>`;
+    }).join('');
+
+    const card=document.createElement('div');
+    card.className='dcard';
+
+    // ★ Volume editor is a dedicated, always-visible block
+    // It is NOT computed from tasks — it is the master input for UA calc
+    card.innerHTML=`
+      <div class="dhead" style="border-left:4px solid ${col.tx}">
+        <div class="dhead-dot ${col.dot}"></div>
+        <div class="dhead-label" style="color:${col.tx}">${day.l}</div>
+        ${day.isMatch?'<div class="md-pill">MATCH DAY</div>':''}
+        <input class="dhead-name" value="${day.n}" onchange="W[${di}].n=this.value;renderStrip()" title="Nombre del día">
+
+        <div class="vol-editor" title="Volumen total de la sesión — editá libremente, base del cálculo de carga">
+          <label>Sesión</label>
+          <input class="vol-input" type="number" min="0" max="180" value="${day.vol}"
+            onchange="updateVol(${di},this.value)"
+            oninput="updateVol(${di},this.value)"
+            style="color:${col.tx}">
+          <span class="vol-unit">min</span>
+          <div class="vol-rpe-sep"></div>
+          <span class="vol-rpe-lbl">RPE prom:</span>
+          <span class="vol-ua" id="avg-rpe-${di}" style="color:${col.tx}">${avgRpe}</span>
+          <div class="vol-rpe-sep"></div>
+          <span class="vol-rpe-lbl">Carga:</span>
+          <span class="vol-ua" id="ua-${di}" style="color:${col.tx}">${ua} UA</span>
+        </div>
+
+        <button class="dhead-settings" onclick="openDayModal(${di})" title="Configurar día"><i class="ti ti-settings"></i></button>
+      </div>
+      <div class="dbody">
+        <div class="dmeta">
+          <div class="mi"><div class="mlb">Intensidad</div><div class="mv" style="color:${col.tx}">${col.e} ${col.n}</div></div>
+          <div class="mi"><div class="mlb">RPE teórico</div><div class="mv">${col.rpe}</div></div>
+          <div class="mi" style="flex:1"><div class="mlb">Objetivos</div><div class="dobj">${(day.obj||[]).join(' · ')}</div></div>
+        </div>
+        <div class="tlist">${tasksHTML}
+          ${!day.isMatch?`<button class="add-btn" onclick="openNewTask(${di})"><i class="ti ti-plus"></i> Agregar tarea</button>`:''}
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+/* Inline volume update — updates display without full re-render */
+function updateVol(di,val){
+  W[di].vol=parseInt(val)||0;
+  // recalc UA for this day only
+  const ua=calcUA(W[di]);
+  const el=document.getElementById('ua-'+di);
+  if(el)el.textContent=ua+' UA';
+  // update strip + totals
+  renderStrip();renderTotals();renderRpeRel();
+}
+
+function setRpeReal(di,ti,val){
+  W[di].tasks[ti].rpeReal=val===''?null:parseFloat(val);
+  renderRpeRel();
+  // also update ua display for this day
+  const ua=calcUA(W[di]);
+  const el=document.getElementById('ua-'+di);
+  if(el)el.textContent=ua+' UA';
+}
+
+function removeTask(di,ti){
+  if(!confirm('¿Eliminar esta tarea?'))return;
+  W[di].tasks.splice(ti,1);
+  renderAll();
+}
+
+/* ═══════ TASK MODAL ═══════ */
+function openNewTask(di){
+  editTaskDay=di;editTaskIdx=null;
+  document.getElementById('t-name').value='';
+  document.getElementById('t-rpe').value=7;document.getElementById('t-rpe-v').textContent='7';
+  document.getElementById('t-obj').value='';document.getElementById('t-series').value='';
+  document.getElementById('t-phys').value='';
+  document.getElementById('auto-hint').style.display='none';
+  document.getElementById('color-auto-lbl').textContent='auto-detectado al elegir parámetros';
+  document.getElementById('modal-ttl').textContent='Nueva tarea — '+W[di].l;
+  applyColor('verde');autoColor();
+  document.getElementById('task-ov').classList.add('open');
+}
+function openEditTask(di,ti){
+  editTaskDay=di;editTaskIdx=ti;
+  const t=W[di].tasks[ti];
   document.getElementById('t-name').value=t.name;
   document.getElementById('t-type').value=t.type||'drill';
   document.getElementById('t-dim').value=t.dim||'20x20';
-  document.getElementById('t-duration').value=t.duration;
-  document.getElementById('t-rpe').value=t.rpe;
-  document.getElementById('t-rpe-val').textContent=t.rpe;
+  document.getElementById('t-players').value='6';
+  document.getElementById('t-dur').value=t.duration;
+  document.getElementById('t-rpe').value=t.rpe;document.getElementById('t-rpe-v').textContent=t.rpe;
   document.getElementById('t-series').value=t.series||'';
   document.getElementById('t-ratio').value=t.ratio||'1:1';
-  document.getElementById('t-objective').value=t.obj||'';
-  document.querySelectorAll('.color-opt').forEach(e=>{e.classList.remove('selected');if(e.dataset.color===t.color)e.classList.add('selected')});
-  selectedColor=t.color;
-  document.querySelector('.modal h2').textContent='Editar tarea';
-  document.getElementById('task-modal').classList.add('open');
+  document.getElementById('t-phys').value=t.phys||'';
+  document.getElementById('t-obj').value=t.obj||'';
+  document.getElementById('modal-ttl').textContent='Editar tarea';
+  document.getElementById('auto-hint').style.display='none';
+  applyColor(t.color||'verde');
+  document.getElementById('task-ov').classList.add('open');
 }
-
-function removeTask(di,ti){currentWeek[di].defaultTasks.splice(ti,1);renderWeek()}
-
+function closeTaskModal(){document.getElementById('task-ov').classList.remove('open');}
 function saveTask(){
   const name=document.getElementById('t-name').value.trim();
-  if(!name)return;
-  const task={name,color:selectedColor,duration:parseInt(document.getElementById('t-duration').value)||10,rpe:parseInt(document.getElementById('t-rpe').value)||7,type:document.getElementById('t-type').value,dim:document.getElementById('t-dim').value,series:document.getElementById('t-series').value,ratio:document.getElementById('t-ratio').value,obj:document.getElementById('t-objective').value};
-  if(editingTaskIdx!==null){currentWeek[editingDay].defaultTasks[editingTaskIdx]=task;}
-  else{currentWeek[editingDay].defaultTasks.push(task);}
-  recalcDayVolume(editingDay);
-  closeModal();renderWeek();
+  if(!name){alert('Ingresá un nombre para la tarea');return;}
+  const task=mk(
+    name,selColor,
+    parseInt(document.getElementById('t-dur').value)||10,
+    parseInt(document.getElementById('t-rpe').value)||7,
+    document.getElementById('t-type').value,
+    document.getElementById('t-dim').value,
+    document.getElementById('t-series').value,
+    document.getElementById('t-ratio').value,
+    document.getElementById('t-phys').value,
+    document.getElementById('t-obj').value
+  );
+  if(editTaskIdx!==null)W[editTaskDay].tasks[editTaskIdx]=task;
+  else W[editTaskDay].tasks.push(task);
+  closeTaskModal();renderAll();
 }
 
-function recalcDayVolume(di){
-  const day=currentWeek[di];
-  if(day.name.includes('MATCH DAY')||day.name==='Descanso')return;
-  day.volume=day.defaultTasks.reduce((s,t)=>s+t.duration,0);
+/* ═══════ DAY MODAL ═══════ */
+function openDayModal(di){
+  editDayIdx=di;const d=W[di];
+  document.getElementById('dm-name').value=d.n;
+  document.getElementById('dm-obj').value=(d.obj||[]).join(', ');
+  document.getElementById('dm-match').checked=!!d.isMatch;
+  document.querySelectorAll('#day-ov .copt').forEach(e=>{e.classList.remove('sel');if(e.dataset.c===d.c)e.classList.add('sel');});
+  selDayColor=d.c||'verde';
+  document.getElementById('day-ov').classList.add('open');
+}
+function closeDayModal(){document.getElementById('day-ov').classList.remove('open');}
+function saveDayModal(){
+  const di=editDayIdx;
+  W[di].n=document.getElementById('dm-name').value.trim()||W[di].n;
+  W[di].obj=document.getElementById('dm-obj').value.split(',').map(s=>s.trim()).filter(Boolean);
+  W[di].isMatch=document.getElementById('dm-match').checked;
+  W[di].c=selDayColor;
+  closeDayModal();renderAll();
 }
 
-function saveWeekToHistory(){
-  const totalVol=currentWeek.reduce((s,d)=>s+d.volume,0);
-  const allTasks=currentWeek.flatMap(d=>d.defaultTasks);
-  const avgRpe=allTasks.length>0?(allTasks.reduce((s,t)=>s+t.rpe,0)/allTasks.length).toFixed(1):5;
-  const load=Math.round(totalVol*(parseFloat(avgRpe))/10);
-  const entry={date:new Date().toLocaleDateString('es-AR'),md:document.getElementById('match-day-select').value,volume:totalVol,avgRpe:parseFloat(avgRpe),load,days:currentWeek.map(d=>({label:d.label,color:d.color,volume:d.volume,tasks:d.defaultTasks.length}))};
-  weeklyHistory.unshift(entry);
-  localStorage.setItem('futsal_weeks',JSON.stringify(weeklyHistory));
-  renderDayHistory(entry);
-  alert('Semana guardada en histórico ✓');
+/* ═══════ SAVE WEEK ═══════ */
+function saveWeek(){
+  const allTasks=W.flatMap(d=>d.tasks);
+  const totalVol=W.reduce((s,d)=>s+(d.vol||0),0);
+  const avgRpe=allTasks.length?+(allTasks.reduce((s,t)=>s+t.rpe,0)/allTasks.length).toFixed(1):0;
+  const ua=W.reduce((s,d)=>s+calcUA(d),0);
+  const dateStr=document.getElementById('week-date').value||new Date().toISOString().slice(0,10);
+  const entry={date:dateStr,vol:totalVol,avgRpe,ua,tmpl:document.getElementById('tmpl-sel').value,
+    days:W.map(d=>({l:d.l,c:d.c,vol:d.vol||0,isMatch:d.isMatch,ua:calcUA(d),
+      tasks:d.tasks.length,
+      realRpes:d.tasks.map(t=>t.rpeReal).filter(r=>r!==null&&r!==undefined&&r!=='')
+    }))
+  };
+  wHistory.unshift(entry);if(wHistory.length>60)wHistory=wHistory.slice(0,60);
+  localStorage.setItem('fl_weeks',JSON.stringify(wHistory));
+  alert('✅ Semana guardada correctamente');
 }
 
-function renderDayHistory(entry){
-  history.push({date:entry.date,load:entry.load,avgRpe:entry.avgRpe,volume:entry.volume});
-  localStorage.setItem('futsal_history',JSON.stringify(history));
-}
-
-/* MENSUAL */
-const MONTHS_ES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-function changeMonth(d){currentMonth+=d;if(currentMonth<0){currentMonth=11;currentYear--;}if(currentMonth>11){currentMonth=0;currentYear++;}renderMonthly()}
+/* ═══════ MENSUAL ═══════ */
+const MES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+function changeMonth(d){curMonth+=d;if(curMonth<0){curMonth=11;curYear--;}if(curMonth>11){curMonth=0;curYear++;}renderMonthly();}
 
 function renderMonthly(){
-  document.getElementById('month-title').textContent=`${MONTHS_ES[currentMonth]} ${currentYear}`;
-  const firstDay=new Date(currentYear,currentMonth,1).getDay();
+  document.getElementById('month-title').textContent=`${MES[curMonth]} ${curYear}`;
+  const firstDay=new Date(curYear,curMonth,1).getDay();
   const offset=(firstDay+6)%7;
-  const daysInMonth=new Date(currentYear,currentMonth+1,0).getDate();
+  const dim=new Date(curYear,curMonth+1,0).getDate();
   const grid=document.getElementById('monthly-grid');
   grid.innerHTML='';
-  for(let i=0;i<offset;i++){const c=document.createElement('div');c.className='month-cell empty';grid.appendChild(c);}
-  for(let d=1;d<=daysInMonth;d++){
+  for(let i=0;i<offset;i++){const c=document.createElement('div');c.className='mcell emp';grid.appendChild(c);}
+  for(let d=1;d<=dim;d++){
+    const ds=`${curYear}-${String(curMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const data=findDayInHistory(ds);
     const cell=document.createElement('div');
-    cell.className='month-cell';
-    const dateStr=`${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const dayData=getDayData(dateStr);
-    const col=dayData?dayData.color:'gray';
-    const colMap={rojo:'#FEF0EF',naranja:'#FEF5E7',amarillo:'#FEFCE8',verde:'#EDFAF2',gray:'#F5F4F0'};
-    const textMap={rojo:'#E8342A',naranja:'#E8780A',amarillo:'#C9A800',verde:'#1A8A4A',gray:'#6B6B6B'};
-    cell.style.background=colMap[col];
-    cell.style.color=textMap[col];
-    cell.style.borderColor=dayData?'currentColor':'var(--border)';
-    cell.innerHTML=`<div class="month-cell-day">${d}</div><div class="month-cell-rpe">${dayData?dayData.rpe:'—'}</div><div class="tooltip">${dayData?dayData.label+' · '+dayData.load+' UA':''}</div>`;
+    cell.className='mcell';
+    if(data){
+      const col=C[data.c]||C.verde;
+      cell.style.background=col.bg;cell.style.borderColor=col.tx;
+      cell.innerHTML=`<div class="mcell-n">${d}</div><div class="mcell-e">${col.e}</div><div class="mcell-ua" style="color:${col.tx}">${data.ua}UA</div><div class="mtip">${data.l} · ${data.vol}min · ${data.ua}UA</div>`;
+    }else{cell.innerHTML=`<div class="mcell-n">${d}</div>`;}
     grid.appendChild(cell);
   }
-  renderACWR();
-  renderMonthStats();
+  renderACWR();renderMonthStats();
 }
 
-function getDayData(dateStr){
-  for(const w of weeklyHistory){
-    if(w.date===new Date(dateStr.replace(/-/g,'/')).toLocaleDateString('es-AR')){
-      return{color:'naranja',rpe:w.avgRpe,load:w.load,label:w.md};
+function findDayInHistory(dateStr){
+  for(const w of wHistory){
+    const wDate=new Date(w.date);
+    for(let i=0;i<7;i++){
+      const d=new Date(wDate);d.setDate(d.getDate()+i);
+      if(d.toISOString().slice(0,10)===dateStr){
+        const dd=w.days[i];if(dd)return dd;
+      }
     }
   }
   return null;
 }
 
-function renderACWR(){
-  const h=history;
-  const now=new Date();
-  const acute=h.filter(e=>{const d=parseDate(e.date);return d&&(now-d)/(86400000)<=7}).reduce((s,e)=>s+e.load,0);
-  const chronic4w=h.filter(e=>{const d=parseDate(e.date);return d&&(now-d)/(86400000)<=28}).reduce((s,e)=>s+e.load,0)/4;
-  document.getElementById('acute-load').textContent=Math.round(acute);
-  document.getElementById('chronic-load').textContent=Math.round(chronic4w)||'—';
-  const maxA=Math.max(acute,chronic4w*1.5,1);
-  document.getElementById('acute-bar').style.width=Math.min(100,acute/maxA*100)+'%';
-  document.getElementById('chronic-bar').style.width=Math.min(100,chronic4w/maxA*100)+'%';
-  if(chronic4w>0){
-    const ratio=acute/chronic4w;
-    document.getElementById('acwr-ratio').textContent=ratio.toFixed(2);
-    let zone,zoneBg,zoneColor;
-    if(ratio<0.8){zone='⚠️ Bajo — Riesgo desacondicionamiento';zoneBg='#FEF5E7';zoneColor='#E8780A';}
-    else if(ratio<=1.3){zone='✅ Zona óptima — Carga segura';zoneBg='#EDFAF2';zoneColor='#1A8A4A';}
-    else if(ratio<=1.5){zone='⚠️ Precaución — Carga elevada';zoneBg='#FEF5E7';zoneColor='#E8780A';}
-    else{zone='🔴 Riesgo lesión — Carga excesiva';zoneBg='#FEF0EF';zoneColor='#E8342A';}
-    const zEl=document.getElementById('acwr-zone');
-    zEl.textContent=zone;zEl.style.background=zoneBg;zEl.style.color=zoneColor;
-  }else{document.getElementById('acwr-ratio').textContent='Sin datos';document.getElementById('acwr-zone').textContent='';}
-}
-
-function parseDate(str){try{const p=str.split('/');return new Date(p[2],p[1]-1,p[0]);}catch{return null;}}
-
 function renderMonthStats(){
-  const monthData=weeklyHistory.filter(w=>{const d=parseDate(w.date);return d&&d.getMonth()===currentMonth&&d.getFullYear()===currentYear;});
-  const totalLoad=monthData.reduce((s,w)=>s+w.load,0);
-  const avgRpe=monthData.length>0?(monthData.reduce((s,w)=>s+w.avgRpe,0)/monthData.length).toFixed(1):'—';
+  const md=wHistory.filter(w=>{const d=new Date(w.date);return d.getFullYear()===curYear&&d.getMonth()===curMonth;});
+  const tua=md.reduce((s,w)=>s+w.ua,0);
+  const avgR=md.length?+(md.reduce((s,w)=>s+w.avgRpe,0)/md.length).toFixed(1):'—';
+  const matches=md.reduce((s,w)=>s+w.days.filter(d=>d.isMatch).length,0);
   document.getElementById('month-stats').innerHTML=`
-    <div class="total-card"><div class="total-label">Semanas registradas</div><div class="total-value">${monthData.length}</div></div>
-    <div class="total-card"><div class="total-label">Carga mensual</div><div class="total-value">${totalLoad}</div><div class="total-sub">unidades acumuladas</div></div>
-    <div class="total-card"><div class="total-label">RPE promedio</div><div class="total-value">${avgRpe}</div></div>
+    <div class="tc"><div class="tlb">Semanas reg.</div><div class="tv">${md.length}</div></div>
+    <div class="tc"><div class="tlb">Carga mensual UA</div><div class="tv">${tua}</div></div>
+    <div class="tc"><div class="tlb">RPE prom. mes</div><div class="tv">${avgR}</div></div>
+    <div class="tc"><div class="tlb">Partidos</div><div class="tv">${matches}</div></div>
   `;
 }
 
-/* HISTORICO */
+function renderACWR(){
+  const now=new Date();
+  const acute=wHistory.filter(w=>(now-new Date(w.date))/86400000<=7).reduce((s,w)=>s+w.ua,0);
+  const arr28=wHistory.filter(w=>(now-new Date(w.date))/86400000<=28);
+  const chronic=arr28.length?arr28.reduce((s,w)=>s+w.ua,0)/4:0;
+  document.getElementById('acute-v').textContent=Math.round(acute);
+  document.getElementById('chronic-v').textContent=chronic?Math.round(chronic):'Sin datos';
+  const mx=Math.max(acute,chronic,1);
+  document.getElementById('acute-bar').style.width=Math.min(100,acute/mx*100)+'%';
+  document.getElementById('chronic-bar').style.width=Math.min(100,chronic/mx*100)+'%';
+  if(chronic>0){
+    const ratio=+(acute/chronic).toFixed(2);
+    document.getElementById('acwr-ratio').textContent=ratio;
+    let zone,bg,tx;
+    if(ratio<0.8){zone='⚠️ Bajo — riesgo desacondicionamiento';bg='var(--ybg)';tx='var(--y)';}
+    else if(ratio<=1.3){zone='✅ Zona óptima — carga segura';bg='var(--gbg)';tx='var(--g)';}
+    else if(ratio<=1.5){zone='⚠️ Precaución — carga elevada';bg='var(--obg)';tx='var(--o)';}
+    else{zone='🔴 Riesgo lesión — carga excesiva';bg='var(--rbg)';tx='var(--r)';}
+    const z=document.getElementById('acwr-zone');z.textContent=zone;z.style.background=bg;z.style.color=tx;
+  }else{
+    document.getElementById('acwr-ratio').textContent='—';
+    document.getElementById('acwr-zone').textContent='Sin historial suficiente';
+  }
+}
+
+/* ═══════ HISTORICO ═══════ */
 function renderHistorico(){
-  const content=document.getElementById('historico-content');
-  if(!weeklyHistory.length){content.innerHTML='<p style="color:var(--muted);text-align:center;padding:3rem">No hay semanas guardadas aún.</p>';return;}
-  content.innerHTML=`<table class="historico-table">
-    <thead><tr><th>Semana</th><th>MD</th><th>Volumen</th><th>RPE prom.</th><th>Carga UA</th><th>Carga diaria</th></tr></thead>
-    <tbody>${weeklyHistory.map((w,i)=>`<tr>
+  const c=document.getElementById('hist-content');
+  if(!wHistory.length){c.innerHTML='<div style="text-align:center;padding:3rem;color:var(--mt)">No hay semanas guardadas aún.<br>Guardá semanas desde la pestaña Semana.</div>';return;}
+  c.innerHTML=`<div class="htw"><table class="htab">
+    <thead><tr><th>Semana</th><th>Plantilla</th><th>Vol. total</th><th>RPE prom.</th><th>Carga (UA)</th><th>Días</th><th>Partidos</th></tr></thead>
+    <tbody>${wHistory.map(w=>`<tr>
       <td><b>${w.date}</b></td>
-      <td><span class="semaforo-pill color-rojo">${w.md.toUpperCase()}</span></td>
-      <td><span style="font-family:var(--font-mono)">${w.volume} min</span></td>
-      <td><span style="font-family:var(--font-mono)">${w.avgRpe}</span></td>
-      <td><span style="font-family:var(--font-mono);font-weight:700">${w.load} UA</span></td>
-      <td>${w.days.map(d=>`<span class="semaforo-pill color-${d.color}" title="${d.label}">${d.label[0]}</span>`).join(' ')}</td>
+      <td style="font-family:var(--FM);font-size:10px">${w.tmpl||'—'}</td>
+      <td><span style="font-family:var(--FM)">${w.vol}min</span></td>
+      <td><span style="font-family:var(--FM)">${w.avgRpe}</span></td>
+      <td><span style="font-family:var(--FM);font-weight:800">${w.ua} UA</span></td>
+      <td>${w.days.map(d=>`<span class="spill" style="background:${(C[d.c]||C.verde).bg};color:${(C[d.c]||C.verde).tx};border:1px solid ${(C[d.c]||C.verde).bd}">${d.l[0]}</span>`).join(' ')}</td>
+      <td>${w.days.filter(d=>d.isMatch).map(d=>d.l).join(', ')||'—'}</td>
     </tr>`).join('')}</tbody>
-  </table>`;
+  </table></div>`;
 }
+function clearHistory(){if(confirm('¿Borrar todo el histórico?')){wHistory=[];localStorage.removeItem('fl_weeks');renderHistorico();}}
 
-function clearHistory(){if(confirm('¿Borrar todo el histórico?')){weeklyHistory=[];history=[];localStorage.removeItem('futsal_weeks');localStorage.removeItem('futsal_history');renderHistorico();}}
-
-/* TEORIA */
+/* ═══════ TEORIA ═══════ */
 function renderTeoria(){
-  document.getElementById('teoria-semaforo').innerHTML=`
-    <div class="teoria-card rojo">
-      <div class="teoria-badge color-rojo">🔴 ROJO — Alta carga</div>
+  document.getElementById('t-semaforo').innerHTML=`
+    <div class="tcard" style="border-left-color:var(--r)">
+      <div class="tbadge" style="background:var(--rbg);color:var(--r)">🔴 ROJO — Alta carga · RPE 8–10</div>
       <h3>Objetivo fisiológico</h3>
-      <p>Alta fatiga acumulada, alto estrés metabólico, gran demanda neuromuscular, trabajo glucolítico fuerte.</p>
-      <h3 style="margin-top:8px">Sensación del jugador</h3>
-      <p>"Termino destruido" · RPE <b>8-10</b></p>
-      <ul class="teoria-list">
-        <li>Transiciones continuas y oleadas</li>
-        <li>4v4 con presión alta</li>
-        <li>RSA / HIIT específico</li>
-        <li>Series largas sin pausa</li>
-      </ul>
-      <p style="margin-top:8px;font-size:11px;color:var(--muted)">Duración útil: 50-80 min de trabajo real · Recuperación >24hs</p>
+      <p>Alta fatiga acumulada, estrés metabólico máximo, gran demanda neuromuscular. Trabajo glucolítico, aceleraciones y frenadas máximas. Recuperación >24-48hs.</p>
+      <h3 style="margin-top:8px">Sensación</h3><p>"Termino destruido"</p>
+      <ul><li>Transiciones continuas y oleadas</li><li>4v4 presión 2:1</li><li>RSA: sprints repetidos</li><li>Intermitente táctico largo</li><li>5v5 competitivo sin pausa</li></ul>
+      <p style="margin-top:6px;font-size:10px">Usar en MD-4 o MD-5. Duración: 50–80 min</p>
     </div>
-    <div class="teoria-card naranja">
-      <div class="teoria-badge color-naranja">🟠 NARANJA — Media/Alta</div>
+    <div class="tcard" style="border-left-color:var(--o)">
+      <div class="tbadge" style="background:var(--obg);color:var(--o)">🟠 NARANJA — Media/Alta · RPE 6–8</div>
       <h3>Objetivo fisiológico</h3>
-      <p>Alta intensidad controlando fatiga, mucha velocidad de juego, potencia aeróbica, toma de decisión rápida.</p>
-      <h3 style="margin-top:8px">Sensación del jugador</h3>
-      <p>"Muy intenso pero recuperable" · RPE <b>6-8</b></p>
-      <ul class="teoria-list">
-        <li>Posesiones dinámicas con presión</li>
-        <li>3v3 competitivo</li>
-        <li>Juego posicional intenso</li>
-        <li>Presión organizada</li>
-      </ul>
+      <p>Alta intensidad controlando fatiga. Potencia aeróbica, velocidad de juego elevada, decisión rápida. Recuperación 12–24hs.</p>
+      <h3 style="margin-top:8px">Sensación</h3><p>"Muy intenso pero recuperable"</p>
+      <ul><li>Posesiones dinámicas con presión</li><li>3v3 y 4v4 competitivo</li><li>Intermitente 15/15 o 30/30</li><li>Juego posicional intenso</li></ul>
     </div>
-    <div class="teoria-card amarillo">
-      <div class="teoria-badge color-amarillo">🟡 AMARILLO — Media/Baja</div>
+    <div class="tcard" style="border-left-color:var(--y)">
+      <div class="tbadge" style="background:var(--ybg);color:var(--y)">🟡 AMARILLO — Media/Baja · RPE 4–6</div>
       <h3>Objetivo fisiológico</h3>
-      <p>Activación y ajustes tácticos, velocidad sin gran desgaste, estímulo técnico-coordinativo, mantenimiento.</p>
-      <h3 style="margin-top:8px">Sensación del jugador</h3>
-      <p>"Entrené bien pero fresco" · RPE <b>4-6</b></p>
-      <ul class="teoria-list">
-        <li>Automatizaciones tácticas</li>
-        <li>Posesión táctica pausada</li>
-        <li>Repaso defensivo</li>
-        <li>Coordinación técnica</li>
-      </ul>
+      <p>Activación y ajustes tácticos. Velocidad sin gran desgaste. Estímulo técnico-coordinativo. Poca fatiga residual.</p>
+      <h3 style="margin-top:8px">Sensación</h3><p>"Entrené bien, termino fresco"</p>
+      <ul><li>Automatizaciones defensivas y ofensivas</li><li>ABP detallado</li><li>Tempo aeróbico</li><li>Situaciones especiales explicativas</li></ul>
     </div>
-    <div class="teoria-card verde">
-      <div class="teoria-badge color-verde">🟢 VERDE — Priming / Bajo</div>
+    <div class="tcard" style="border-left-color:var(--g)">
+      <div class="tbadge" style="background:var(--gbg);color:var(--g)">🟢 VERDE — Priming / Bajo · RPE 2–4</div>
       <h3>Objetivo fisiológico</h3>
-      <p>Activación neural, velocidad pura, timing, coordinación, sensación de frescura, potenciación precompetitiva.</p>
-      <h3 style="margin-top:8px">Sensación del jugador</h3>
-      <p>"Termino mejor de lo que empecé" · RPE <b>2-4</b></p>
-      <ul class="teoria-list">
-        <li>Priming y activación explosiva</li>
-        <li>Técnica fina individual</li>
-        <li>ABP explicativo</li>
-        <li>Velocidad corta</li>
-      </ul>
-    </div>
-  `;
+      <p>Activación neural y velocidad pura. Timing y coordinación fina. Sensación de frescura. Potenciación precompetitiva. Sin fatiga residual.</p>
+      <h3 style="margin-top:8px">Sensación</h3><p>"Termino mejor que como empecé"</p>
+      <ul><li>Velocidad corta 10–20m, pausa larga</li><li>Técnica individual fina</li><li>ABP explicativo</li><li>Priming neural pre-partido</li></ul>
+    </div>`;
 
-  const mdGuides=[
-    {name:'MD-5 (Lunes)',color:'verde',title:'Recuperación activa',content:{trabajar:['Técnica individual de baja intensidad','ABP explicativo','Priming suave','Rondo técnico simple'],evitar:['Cualquier ejercicio con alta densidad','Juegos reducidos intensos','Transiciones']}},
-    {name:'MD-4 (Martes)',color:'rojo',title:'Pico de carga semanal',content:{trabajar:['Transiciones continuas y oleadas','4v4 o 5v5 con presión máxima','RSA / HIIT específico','Juego reducido intenso'],evitar:['Pausas largas explicativas','Trabajo de precisión técnica fina']}},
-    {name:'MD-3 (Miércoles)',color:'naranja',title:'Alta intensidad táctica',content:{trabajar:['Posesión condicionada con presión','Juego posicional dinámico','Superioridades numéricas','Presión organizada'],evitar:['Carga máxima','Repeticiones muy largas']}},
-    {name:'MD-2 (Jueves)',color:'amarillo',title:'Ajuste y automatización',content:{trabajar:['Sistemas defensivos','Automatizaciones ofensivas','ABP detallado','Velocidad de ejecución corta'],evitar:['Alta fatiga','Transiciones de alta intensidad']}},
-    {name:'MD-1 (Viernes)',color:'verde',title:'Priming precompetitivo',content:{trabajar:['Activación neuromuscular explosiva','Situaciones favorables (5v4)','Finalización','Ejercicios de confianza'],evitar:['Cualquier fatiga residual','Series largas','Alta densidad']}},
+  document.getElementById('t-acwr').innerHTML=`
+    <div class="ibox"><b>Carga aguda (7 días):</b> suma de Unidades de Carga (UA = vol_sesión_min × RPE_promedio_tareas / 10) de los últimos 7 días. Refleja la fatiga reciente del equipo.</div>
+    <div class="ibox"><b>Carga crónica (28 días):</b> promedio semanal de UA acumuladas en las últimas 4 semanas. Representa la capacidad de trabajo y el nivel de forma del equipo.</div>
+    <div class="ibox"><b>Índice ACWR</b> (Acute:Chronic Workload Ratio) = Carga Aguda ÷ Carga Crónica.<br><br>
+      <span style="color:var(--g);font-weight:700">0.8–1.3 → Zona óptima y segura</span> — el equipo puede rendir sin riesgo aumentado de lesión.<br>
+      <span style="color:var(--o);font-weight:700">1.3–1.5 → Precaución</span> — carga elevada, vigilar señales de sobrecarga.<br>
+      <span style="color:var(--r);font-weight:700">&gt;1.5 → Riesgo alto de lesión</span> — el pico supera la tolerancia crónica.<br>
+      <span style="color:var(--y);font-weight:700">&lt;0.8 → Desacondicionamiento</span> — el equipo puede perder forma o ser susceptible al volver a carga alta.<br><br>
+      <b>Regla práctica:</b> no aumentar la carga semanal más del 10% respecto a la semana anterior. Picos &gt;15% son el principal predictor de lesión muscular en fútbol sala.
+    </div>
+    <div class="ibox"><b>RPE de Borg CR-10:</b> el jugador califica su esfuerzo percibido entre 1 y 10, idealmente 15–30 minutos después del entrenamiento. El producto duración × RPE es la UA diaria (Foster, 2001). No requiere GPS ni lactato. Registrá el RPE real en cada tarea para comparar con el teórico y validar tu planificación.</div>`;
+
+  const mdg=[
+    {lbl:'MD-5',n:'Recuperación activa',c:'verde',
+     teo:'Post-partido, el sistema neuromuscular necesita recuperarse. El objetivo NO es entrenar, es preparar el cuerpo para el pico de carga del MD-4. Sesiones cortas, baja densidad, sin sprints máximos.',
+     ok:['Técnica individual de baja intensidad','ABP explicativo sin presión de tiempo','Rondo técnico simple con muchos toques','Velocidad corta con pausa larga (1:4)','Coordinación y movilidad'],
+     no:['Alta densidad','Transiciones o reducidos intensos','Sprints máximos o RSA','Situaciones de alta presión','Sesiones >50min'],
+     ej:['Rondo 6v2 — 4×5min — 1:3','Técnica de conducción — 15min','ABP repaso sistemas — 20min','Velocidad 10m × 8 rep — 1:4']},
+    {lbl:'MD-4',n:'Pico de carga semanal',c:'rojo',
+     teo:'El día de mayor carga. La supercompensación requiere estímulo máximo cuando la recuperación está completa (48h post-partido). Alta fatiga planificada y controlada.',
+     ok:['Transiciones continuas y oleadas','4v4 presión máxima, densidad 2:1','RSA: 8–12 series de 15–30s','Intermitente táctico alta intensidad','Reducidos con superioridades cambiantes'],
+     no:['Pausas largas explicativas','Técnica fina (fatiga neural)','Sesiones >90min','Finalización de calidad'],
+     ej:['Oleadas 3v3 ida-vuelta — 6×3min — 2:1','4v4 transición — 4×4min — 1:1','RSA 8×15s máximo — 1:2','Intermitente táctico 30/30 — 12 series']},
+    {lbl:'MD-3',n:'Alta intensidad táctica',c:'naranja',
+     teo:'Alta velocidad de juego con control de fatiga. Se trabajan principios tácticos a alta velocidad de decisión, pero sin llegar al pico del MD-4.',
+     ok:['Posesión condicionada con pressing','Juego posicional dinámico','3v3 bilateral competitivo','Presión organizada en sistema','Superioridades numéricas dinámicas'],
+     no:['Fatiga máxima (reservar para MD-4)','Series excesivamente largas','Alta densidad >20min continuos'],
+     ej:['Posesión 5v5 zonas — 4×5min — 1:1','3v3 competitivo — 4×4min — 1:1','Rondo transición 4v2+2 — 5×3min','Pressing organizado — 20min']},
+    {lbl:'MD-2',n:'Ajuste táctico',c:'amarillo',
+     teo:'Día de ajuste fino. Automatizar jugadas, repasar ABP, correcciones individuales y colectivas. Baja fatiga, alta calidad técnico-táctica.',
+     ok:['Automatizaciones defensivas sin alta densidad','ABP ofensivo y defensivo detallado','Situaciones especiales con correcciones','Velocidad corta con pausa larga','Reducido táctico con interrupciones'],
+     no:['Alta fatiga o densidad alta','Transiciones de alta intensidad','RSA o intermitente intenso'],
+     ej:['Sistema defensivo 5v5 — 20min — 1:2','ABP ofensivo: 6 jugadas — 20min','5v4 rotativo con correcciones — 20min','Velocidad 10m × 6 con técnica — 1:4']},
+    {lbl:'MD-1',n:'Priming precompetitivo',c:'verde',
+     teo:'Activar el sistema neuromuscular SIN producir fatiga. Sesiones de 20–35min con alta velocidad y baja densidad mejoran el rendimiento al día siguiente (PAP: Post-Activation Potentiation).',
+     ok:['Velocidad explosiva 10–20m con pausa larga','Situaciones favorables 5v4 de confianza','Finalización al arco sin presión','Activación neuromuscular técnica','ABP: repaso corto pre-partido'],
+     no:['Cualquier fatiga residual','Series largas o alta densidad','Reducidos intensos','Transiciones de alta intensidad','Sesiones >40min'],
+     ej:['Velocidad 20m × 6 rep — 1:5','5v4 favorables — 3×5min — 1:3','Finalización libre — 10min','Rondo técnico suave — 2×5min']},
   ];
-
-  document.getElementById('md-guides').innerHTML=mdGuides.map(md=>`
-    <div class="md-guide">
-      <div class="md-guide-header" onclick="toggleGuide(this)">
-        <div class="day-dot dot-${md.color}" style="width:10px;height:10px;border-radius:50%;background:var(--${md.color})"></div>
-        <h3>${md.name} — <span style="color:var(--${md.color})">${md.title}</span></h3>
-        <i class="ti ti-chevron-down" style="color:var(--muted);font-size:16px"></i>
+  document.getElementById('t-mdguides').innerHTML=mdg.map(md=>`
+    <div class="mdg">
+      <div class="mdgh" onclick="tgl(this)">
+        <div style="width:8px;height:8px;border-radius:50%;background:${C[md.c].tx};flex-shrink:0"></div>
+        <h3><span class="spill" style="background:${C[md.c].bg};color:${C[md.c].tx};border:1px solid ${C[md.c].bd}">${md.lbl}</span>&nbsp;&nbsp;${md.n}</h3>
+        <i class="ti ti-chevron-down chev" style="color:var(--mt);font-size:13px"></i>
       </div>
-      <div class="md-guide-body">
-        <div class="md-guide-grid">
-          <div>
-            <h4>✅ Trabajar</h4>
-            <ul class="teoria-list">${md.content.trabajar.map(t=>`<li>${t}</li>`).join('')}</ul>
-          </div>
-          <div>
-            <h4>❌ Evitar</h4>
-            <ul class="teoria-list">${md.content.evitar.map(t=>`<li>${t}</li>`).join('')}</ul>
-          </div>
+      <div class="mdgb">
+        <div class="ibox">${md.teo}</div>
+        <div class="mdgg">
+          <div><div class="mdh4">✅ Trabajar</div><ul style="list-style:none;display:flex;flex-direction:column;gap:3px">${md.ok.map(t=>`<li style="font-size:11px;display:flex;gap:5px;align-items:flex-start;color:var(--tx)"><span style="opacity:.4;flex-shrink:0">→</span>${t}</li>`).join('')}</ul></div>
+          <div><div class="mdh4">❌ Evitar</div><ul style="list-style:none;display:flex;flex-direction:column;gap:3px">${md.no.map(t=>`<li style="font-size:11px;display:flex;gap:5px;align-items:flex-start;color:var(--tx)"><span style="opacity:.4;flex-shrink:0">→</span>${t}</li>`).join('')}</ul></div>
         </div>
+        <div style="margin-top:10px"><div class="mdh4" style="font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--mt);font-weight:700;margin-bottom:5px">📋 Ejemplos</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:2px">${md.ej.map(e=>`<li style="font-size:10px;font-family:var(--FM);color:var(--mt);display:flex;gap:5px"><span style="opacity:.4">→</span>${e}</li>`).join('')}</ul></div>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 
-  document.getElementById('teoria-tareas').innerHTML=`
-    <div class="teoria-card" style="border-left-color:var(--muted)">
-      <h3 style="margin-bottom:8px">Tecnificación (Drill / Analítico)</h3>
-      <p>Trabajo individual o pequeño grupo sin oposición real.</p>
-      <ul class="teoria-list">
-        <li>🟢 Verde: técnica individual libre</li>
-        <li>🟡 Amarillo: automatización con oposición pasiva</li>
-        <li>🔴 Rojo: RSA / HIIT específico</li>
-      </ul>
-    </div>
-    <div class="teoria-card" style="border-left-color:var(--muted)">
-      <h3 style="margin-bottom:8px">Reducidos (1v1 → 5v5)</h3>
-      <p>Mayor jugadores = más carga táctica. Menos jugadores = más carga individual.</p>
-      <ul class="teoria-list">
-        <li>1v1/2v2: 🟠-🔴 alta demanda individual</li>
-        <li>3v3: 🟠 bilateral intenso</li>
-        <li>4v4: 🔴 máxima carga si hay presión</li>
-        <li>5v5 táctico: 🟡 · competitivo: 🔴</li>
-      </ul>
-    </div>
-    <div class="teoria-card" style="border-left-color:var(--muted)">
-      <h3 style="margin-bottom:8px">Transiciones</h3>
-      <p>Las tareas MÁS fatigosas del futsal. Combinan sprint + frenada + cambio de dirección + decisión.</p>
-      <ul class="teoria-list">
-        <li>🟡 Cortas con pausa: técnico-coordinativo</li>
-        <li>🟠 Ida y vuelta 3v2: alta intensidad</li>
-        <li>🔴 Oleadas continuas: máxima fatiga</li>
-      </ul>
-    </div>
-    <div class="teoria-card" style="border-left-color:var(--muted)">
-      <h3 style="margin-bottom:8px">Balón Parado (ABP)</h3>
-      <p>Baja carga física, alta carga cognitiva-táctica.</p>
-      <ul class="teoria-list">
-        <li>🟢 Verde: explicativo y repaso</li>
-        <li>🟡 Amarillo: repetición moderada</li>
-        <li>🟠 Naranja: competitivo dinámico</li>
-      </ul>
-    </div>
-    <div class="teoria-card" style="border-left-color:var(--muted)">
-      <h3 style="margin-bottom:8px">Situaciones especiales (5v4 / 4v3)</h3>
-      <p>Alta intensidad táctica. El equipo en inferioridad trabaja más.</p>
-      <ul class="teoria-list">
-        <li>🟡 Amarillo: explicativo y con pausa</li>
-        <li>🟠 Naranja: dinámico competitivo</li>
-        <li>🔴 Rojo: continuo con transición</li>
-      </ul>
-    </div>
-    <div class="teoria-card" style="border-left-color:var(--muted)">
-      <h3 style="margin-bottom:8px">Variables que aumentan la carga</h3>
-      <p>La carga real no depende solo de correr. El futsal fatiga desde lo neuromuscular y cognitivo.</p>
-      <ul class="teoria-list">
-        <li>Espacio grande → más metros</li>
-        <li>Menos toques → más intensidad neural</li>
-        <li>Transición inmediata → máxima fatiga</li>
-        <li>Relación 2:1 trabajo/pausa → 🔴</li>
-        <li>Alta presión + decisión rápida → 🟠-🔴</li>
-      </ul>
-    </div>
-  `;
+  document.getElementById('t-tareas').innerHTML=`
+    <div class="tcard" style="border-left-color:var(--mt)"><h3>Drill analítico / Tecnificación</h3><p>Sin oposición real o pasiva. Alta calidad técnica, baja carga metabólica.</p><ul><li>🟢 Técnica libre</li><li>🟡 Automatización con oposición pasiva</li><li>🟢 ABP explicativo</li></ul></div>
+    <div class="tcard" style="border-left-color:var(--mt)"><h3>Velocidad 10 / 20 / 30m</h3><p>Alta calidad neuromuscular. Baja fatiga si la pausa es ≥1:4.</p><ul><li>🟢 10m con 1:4+</li><li>🟡 20–30m con 1:3</li><li>🟠 Series sin pausa suficiente</li></ul></div>
+    <div class="tcard" style="border-left-color:var(--mt)"><h3>RSA — Sprints Repetidos</h3><p>Máxima carga glucolítica y neuromuscular. Específico del futsal.</p><ul><li>🔴 Siempre</li><li>6–12 × 15–30s a máxima intensidad</li><li>Pausa 1:2</li><li>Solo en MD-4 o MD-5</li></ul></div>
+    <div class="tcard" style="border-left-color:var(--mt)"><h3>Intermitente 15/15 · 30/30 · Táctico</h3><p>El componente cognitivo táctico aumenta la carga real vs intermitente sin contexto.</p><ul><li>🟠 15/15 (90–95% VO2max)</li><li>🟠–🔴 30/30</li><li>Variable según densidad y espacio</li></ul></div>
+    <div class="tcard" style="border-left-color:var(--mt)"><h3>Tempo continuo</h3><p>60–75% FC máx. Bajo impacto glucolítico. Recuperación activa.</p><ul><li>🟡–🟢</li><li>Útil en MD-2 y MD-6 post-partido</li><li>15–25min máximo</li></ul></div>
+    <div class="tcard" style="border-left-color:var(--mt)"><h3>Reducidos 1v1 → 5v5</h3><p>Menos jugadores = más carga individual. Mayor espacio = más metros.</p><ul><li>1v1/2v2: 🟠–🔴</li><li>3v3: 🟠 bilateral intenso</li><li>4v4 con presión: 🔴</li><li>5v5 táctico pausado: 🟡</li></ul></div>
+    <div class="tcard" style="border-left-color:var(--mt)"><h3>Transiciones</h3><p>Las tareas MÁS fatigosas del futsal: sprint + frenada + cambio de dirección + decisión.</p><ul><li>🟡 Corta técnica con pausa</li><li>🟠 3v2 ida y vuelta</li><li>🔴 Oleadas continuas</li></ul></div>
+    <div class="tcard" style="border-left-color:var(--mt)"><h3>ABP — Balón parado</h3><p>Baja carga física, alta carga cognitiva-táctica. Llena volumen sin sumar fatiga.</p><ul><li>🟢 Explicativo con pausa</li><li>🟡 Repetición moderada</li><li>🟠 Competitivo dinámico</li></ul></div>
+    <div class="tcard" style="border-left-color:var(--mt)"><h3>Situaciones especiales 5v4 / 4v3</h3><p>El equipo en inferioridad trabaja más. Útil para priming y finalización.</p><ul><li>🟡 Explicativo</li><li>🟠 Dinámico competitivo</li><li>🔴 Continuo con transición</li></ul></div>
+    <div class="tcard" style="border-left-color:var(--dk)"><h3>Regla de oro</h3><p>El futsal fatiga desde lo neuromuscular y cognitivo, no solo desde lo aeróbico.</p><ul><li>Espacio grande → más metros → fatiga aeróbica</li><li>Espacio pequeño → aceleraciones → fatiga neuromuscular</li><li>Menos toques → más presión cognitiva</li><li>Ratio 2:1 → fatiga acumulada máxima</li><li><b>Un 4v4 pequeño puede fatigar más que correr 20min</b></li></ul></div>`;
 }
 
-function toggleGuide(header){
-  const body=header.nextElementSibling;
-  body.classList.toggle('open');
-  header.querySelector('.ti-chevron-down').style.transform=body.classList.contains('open')?'rotate(180deg)':'';
-}
+function tgl(h){const b=h.nextElementSibling;b.classList.toggle('open');const ch=h.querySelector('.chev');if(ch)ch.style.transform=b.classList.contains('open')?'rotate(180deg)':'';}
 
+/* ═══════ NAV ═══════ */
 function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
-  document.querySelectorAll('.nav-tab').forEach(t=>{if(t.textContent.toLowerCase().includes(id.substring(0,4)))t.classList.add('active');});
+  document.querySelector(`.tab[data-page="${id}"]`).classList.add('active');
   if(id==='mensual')renderMonthly();
   if(id==='historico')renderHistorico();
   if(id==='teoria')renderTeoria();
 }
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>showPage(t.dataset.page)));
+document.getElementById('task-ov').addEventListener('click',function(e){if(e.target===this)closeTaskModal();});
+document.getElementById('day-ov').addEventListener('click',function(e){if(e.target===this)closeDayModal();});
 
-document.querySelectorAll('.nav-tab').forEach((t,i)=>{
-  const ids=['semana','mensual','historico','teoria'];
-  t.onclick=()=>showPage(ids[i]);
-});
-
-document.getElementById('task-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
-
-initWeek();
-renderWeek();
+/* ═══════ INIT ═══════ */
+const today=new Date();
+const mon=new Date(today);mon.setDate(today.getDate()-((today.getDay()+6)%7));
+document.getElementById('week-date').value=mon.toISOString().slice(0,10);
+applyTemplate();
 </script>
 </body>
 </html>
